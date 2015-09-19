@@ -67,16 +67,8 @@ public class EventFragment extends Fragment {
                 new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                        intent.putExtra(DetailsActivity.ID_KEY, _adapter.getItemList().get(position).get_id());
-
-                        View movingView = getActivity().findViewById(R.id.appBarLayout);
-                        Pair<View, String> pair1 = Pair.create(movingView, movingView.getTransitionName());
-
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                getActivity(), pair1
-                        );
-                        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+                        _adapter.setSelectedPos(position);
+                        _adapter.notifyItemChanged(position);
                     }
                 })
         );
@@ -98,8 +90,7 @@ public class EventFragment extends Fragment {
 
     private void updateItemList() {
         if(_db != null) {
-            _db.getDeposits(_adapter.getItemList(), _where);
-
+            _db.getEvents(_adapter.getItemList(), _where);
             _adapter.notifyDataSetChanged();
         }
     }

@@ -14,15 +14,13 @@ import java.util.List;
 import java.util.Random;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private int mSelectedPos;
     private ArrayList<Event> mItemList;
-
     public RecyclerAdapter() {
         mItemList = new ArrayList<>();
+        mSelectedPos = -1;
     }
-
-    public ArrayList<Event> getItemList() {
-        return mItemList;
-    }
+    public ArrayList<Event> getItemList() { return mItemList; }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,8 +34,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         RecyclerItemViewHolder holder = (RecyclerItemViewHolder) viewHolder;
         Event event = mItemList.get(position);
         holder.setTitle(event.get_title());
-        holder.setInfo(event.get_info());
-        holder.setDate(event.get_startDateText());
+        holder.setDays("" + event.get_dayCount());
+        holder.showButtons(position == mSelectedPos);
     }
 
     @Override
@@ -45,4 +43,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mItemList == null ? 0 : mItemList.size();
     }
 
+    public int getSelectedPos() { return mSelectedPos; }
+    public void setSelectedPos(int pos) { mSelectedPos = pos; }
 }

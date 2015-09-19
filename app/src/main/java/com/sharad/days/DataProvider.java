@@ -20,24 +20,28 @@ public class DataProvider {
     public static final int DATABASE_VERSION = 1;
 
     // DB Item FD table fields
-    public static final String KEY_FD_ROWID      = "_id";
-    public static final String KEY_FD_TITLE      = "title";
-    public static final String KEY_FD_DATE       = "date";
-    public static final String KEY_FD_END_DATE   = "end_date";
+    public static final String KEY_EVENT_ROWID      = "_id";
+    public static final String KEY_EVENT_TITLE      = "title";
+    public static final String KEY_EVENT_DATE       = "date";
+    public static final String KEY_EVENT_COLOR      = "color";
+    public static final String KEY_EVENT_NOTIFY     = "notify";
+    public static final String KEY_EVENT_FAVORITE   = "favorite";
 
 
-    public static final String[] ALL_KEYS_FD = new String[] {KEY_FD_ROWID, KEY_FD_TITLE,
-			KEY_FD_DATE, KEY_FD_END_DATE };
+    public static final String[] ALL_KEYS_EVENT = new String[] {KEY_EVENT_ROWID, KEY_EVENT_TITLE,
+			KEY_EVENT_DATE, KEY_EVENT_COLOR, KEY_EVENT_NOTIFY, KEY_EVENT_FAVORITE };
 
     public static final String DATABASE_NAME = "savings";
-    public static final String DATABASE_TABLE_FD = "fd_table";
+    public static final String DATABASE_TABLE_EVENT = "event_table";
 
-    private static final String DATABASE_CREATE_SQL_FD = "create table " + DATABASE_TABLE_FD
+    private static final String DATABASE_CREATE_SQL_EVENT = "create table " + DATABASE_TABLE_EVENT
             + " ("
-            + KEY_FD_ROWID     + " integer primary key autoincrement, "
-            + KEY_FD_TITLE     + " text not null, "
-            + KEY_FD_DATE      + " integer not null, "
-            + KEY_FD_END_DATE  + " integer not null"
+            + KEY_EVENT_ROWID     + " integer primary key autoincrement, "
+            + KEY_EVENT_TITLE     + " text not null, "
+            + KEY_EVENT_DATE      + " integer not null, "
+            + KEY_EVENT_COLOR     + " integer not null, "
+            + KEY_EVENT_NOTIFY    + " integer not null, "
+            + KEY_EVENT_FAVORITE  + " integer not null"
             + ");";
 
     private final Context context;
@@ -72,73 +76,79 @@ public class DataProvider {
        +++++++++++++++++++++ FD RECORD METHODS ++++++++++++++++++++++
        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     */
-    public long insertDeposit(Event event) {
+    public long insertEvent(Event event) {
         // Create row's data:
         ContentValues content = new ContentValues();
-        content.put(KEY_FD_TITLE    , event.get_title());
-        content.put(KEY_FD_DATE     , event.get_startDate().getTime());
-        content.put(KEY_FD_END_DATE , event.get_endDate().getTime());
+        content.put(KEY_EVENT_TITLE    , event.get_title());
+        content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
+        content.put(KEY_EVENT_COLOR    , event.get_colorId());
+        content.put(KEY_EVENT_NOTIFY   , event.is_notify());
+        content.put(KEY_EVENT_FAVORITE , event.is_favorite());
 
         // Insert it into the database.
-        return db.insert(DATABASE_TABLE_FD, null, content);
+        return db.insert(DATABASE_TABLE_EVENT, null, content);
     }
 	
-	public boolean updateDeposit(long rowId, Event event) {
-        String where = KEY_FD_ROWID + "=" + rowId;
+	public boolean updateEvent(long rowId, Event event) {
+        String where = KEY_EVENT_ROWID + "=" + rowId;
 
         // Create row's data:
         ContentValues content = new ContentValues();
-        content.put(KEY_FD_TITLE    , event.get_title());
-        content.put(KEY_FD_DATE     , event.get_startDate().getTime());
-        content.put(KEY_FD_END_DATE , event.get_endDate().getTime());
+        content.put(KEY_EVENT_TITLE    , event.get_title());
+        content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
+        content.put(KEY_EVENT_COLOR    , event.get_colorId());
+        content.put(KEY_EVENT_NOTIFY   , event.is_notify());
+        content.put(KEY_EVENT_FAVORITE , event.is_favorite());
 
         // Update it into the database.
-        return db.update(DATABASE_TABLE_FD, content, where, null) != 0;
+        return db.update(DATABASE_TABLE_EVENT, content, where, null) != 0;
     }
 
-    public boolean deleteDeposit(long rowId) {
-        String where = KEY_FD_ROWID + "=" + rowId;
-        return db.delete(DATABASE_TABLE_FD, where, null) != 0;
+    public boolean deleteEvent(long rowId) {
+        String where = KEY_EVENT_ROWID + "=" + rowId;
+        return db.delete(DATABASE_TABLE_EVENT, where, null) != 0;
     }
 	
-	public void deleteAllDeposits() {
-		db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_FD);
-        db.execSQL(DATABASE_CREATE_SQL_FD);
+	public void deleteAllEvents() {
+		db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_EVENT);
+        db.execSQL(DATABASE_CREATE_SQL_EVENT);
     }
 	
-	private Event parseDeposit(Cursor c) {
-        long id 		= c.getLong(c.getColumnIndex(KEY_FD_ROWID));
-        String title 	= c.getString(c.getColumnIndex(KEY_FD_TITLE));
-        Date stDate		= new Date(c.getLong(c.getColumnIndex(KEY_FD_DATE)));
-        Date endDate	= new Date(c.getLong(c.getColumnIndex(KEY_FD_END_DATE)));
+	private Event parseEvent(Cursor c) {
+        long id 		 = c.getLong(c.getColumnIndex(KEY_EVENT_ROWID));
+        String title 	 = c.getString(c.getColumnIndex(KEY_EVENT_TITLE));
+        Date stDate		 = new Date(c.getLong(c.getColumnIndex(KEY_EVENT_DATE)));
+        int colorId	     = (int)c.getLong(c.getColumnIndex(KEY_EVENT_COLOR));
+        boolean notify   = (c.getLong(c.getColumnIndex(KEY_EVENT_NOTIFY)) > 0) ? true : false;
+        boolean favorite = (c.getLong(c.getColumnIndex(KEY_EVENT_FAVORITE)) > 0) ? true : false;
 
-        Event event = new Event(id, title, stDate, endDate);
+        Event event = new Event(id, title, stDate, colorId, notify, favorite);
         return event;
 	}
 	
-	public Event getDeposit(long rowId) {
-        Event deposit = null;
-        String where = KEY_FD_ROWID + "=" + rowId;
-        Cursor c = 	db.query(true, DATABASE_TABLE_FD, ALL_KEYS_FD,
+	public Event getEvent(long rowId) {
+        Event event = null;
+        String where = KEY_EVENT_ROWID + "=" + rowId;
+        Cursor c = 	db.query(true, DATABASE_TABLE_EVENT, ALL_KEYS_EVENT,
                 where, null, null, null, null, null);
         if(c.moveToFirst()) {
-            deposit = parseDeposit(c);
+            event = parseEvent(c);
         }
-        return deposit;
+        return event;
     }
 	
-	public void getDeposits(ArrayList<Event> deposits) {
-		getDeposits(deposits, null);
-	}
+	public void getEvents(ArrayList<Event> events) {
+        getEvents(events, null);
+    }
 	
-	public void getDeposits(ArrayList<Event> deposits, String where) {
-        deposits.clear();
-        Cursor c = 	db.query(true, DATABASE_TABLE_FD, ALL_KEYS_FD,
+	public void getEvents(ArrayList<Event> events, String where) {
+        events.clear();
+        Cursor c = 	db.query(true, DATABASE_TABLE_EVENT, ALL_KEYS_EVENT,
                 where, null, null, null, null, null);
         if (c != null) {
             if(c.moveToFirst()) {
 				do {
-					deposits.add(parseDeposit(c));
+                    events.add(parseEvent(c));
 				} while (c.moveToNext());
 			}
         }
@@ -160,7 +170,7 @@ public class DataProvider {
 
         @Override
         public void onCreate(SQLiteDatabase _db) {
-            _db.execSQL(DATABASE_CREATE_SQL_FD);
+            _db.execSQL(DATABASE_CREATE_SQL_EVENT);
         }
 
         @Override
@@ -169,7 +179,7 @@ public class DataProvider {
                     + " to " + newVersion + ", which will destroy all old data!");
 
             // Destroy old database:
-            _db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_FD);
+            _db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_EVENT);
 
            // Recreate new database:
             onCreate(_db);
