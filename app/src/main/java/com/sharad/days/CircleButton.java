@@ -122,7 +122,7 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
         canvas.drawCircle(centerX, centerY, pressedRingRadius + animationProgress, focusPaint);
         canvas.drawCircle(centerX, centerY, outerRadius - pressedRingWidth, circlePaint);
         if(!mChecked) {
-            canvas.drawCircle(centerX, centerY, outerRadius - (3 * pressedRingWidth), whitePaint);
+            //canvas.drawCircle(centerX, centerY, outerRadius - (3 * pressedRingWidth), whitePaint);
         }
         super.onDraw(canvas);
     }
@@ -149,7 +149,6 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
         this.defaultColor = color;
         this.pressedColor = getHighlightColor(color, PRESSED_COLOR_LIGHTUP);
 
-        whitePaint.setColor(Color.WHITE);
         circlePaint.setColor(defaultColor);
         focusPaint.setColor(defaultColor);
         focusPaint.setAlpha(PRESSED_RING_ALPHA);
@@ -185,15 +184,18 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
                 .getDisplayMetrics());
 
         int color = Color.BLACK;
+        int colorBg = Color.WHITE;
         if (attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleButton);
             color = a.getColor(R.styleable.CircleButton_cb_color, color);
+            colorBg = a.getColor(R.styleable.CircleButton_cb_background, colorBg);
             pressedRingWidth = (int) a.getDimension(R.styleable.CircleButton_cb_pressedRingWidth, pressedRingWidth);
             a.recycle();
         }
 
         setColor(color);
         setColorFilter(Color.WHITE);
+        whitePaint.setColor(colorBg);
 
         focusPaint.setStrokeWidth(pressedRingWidth);
         final int pressedAnimationTime = getResources().getInteger(ANIMATION_TIME_ID);

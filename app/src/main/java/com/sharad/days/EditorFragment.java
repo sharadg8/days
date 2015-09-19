@@ -1,15 +1,24 @@
 package com.sharad.days;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,7 +44,8 @@ public class EditorFragment extends Fragment {
     private ImageButton mCancel;
     private EditText    mTitleText;
     private EditText    mDateText;
-    private int mColorId;
+    private RelativeLayout  mColorPalette;
+    private LinearLayout    mEditorView;
     DataProvider _db;
     int mYear;
     int mMonth;
@@ -43,7 +53,6 @@ public class EditorFragment extends Fragment {
 
     public final static int NEXT_CLOSE_EDITOR = 0;
     public final static int NEXT_ADDED_EDITOR = 1;
-    public final static int NEXT_SHOW_PALETTE = 2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,14 +73,14 @@ public class EditorFragment extends Fragment {
     }
 
     public EditorFragment() {
-        // Required empty public constructor
+        //
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mColorId = getArguments().getInt(ARG_COLOR_ID);
+            //mColorId = getArguments().getInt(ARG_COLOR_ID);
         }
     }
 
@@ -88,7 +97,7 @@ public class EditorFragment extends Fragment {
         mPalette = (ImageButton) rootView.findViewById(R.id.btn_palette);
         mPalette.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
-                showNextView(NEXT_SHOW_PALETTE);
+                showColorPalette();
             }
         });
 
@@ -159,6 +168,60 @@ public class EditorFragment extends Fragment {
                 mDatePicker.show();
             }
         });
+
+        mColorPalette = (RelativeLayout) rootView.findViewById(R.id.colorPicker);
+        mColorPalette.setVisibility(View.GONE);
+
+        mEditorView = (LinearLayout) rootView.findViewById(R.id.view_add_new);
+        mEditorView.setVisibility(View.VISIBLE);
+
+        configurePaletteButton(rootView, R.id.palette_cb0, R.color.palette0);
+    }
+
+    private void configurePaletteButton(View rootView, int palette_cb0, int palette0) {
+        final ImageView cb = (ImageView) rootView.findViewById(palette_cb0);
+        cb.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                int[] location = new int[2];
+                cb.getLocationOnScreen(location);
+                Point center = new Point(location[0], location[1]);
+                hideColorPalette(center);
+            }
+        });
+    }
+
+    private void showColorPalette() {
+        int[] location = new int[2];
+        mPalette.getLocationOnScreen(location);
+        Point center = new Point(location[0], location[1]);
+
+        int finalRadius = Math.max(mColorPalette.getWidth(), mColorPalette.getHeight());
+        Animator anim = ViewAnimationUtils.createCircularReveal(mColorPalette, center.x, center.y, 0, finalRadius);
+        anim.setDuration(300);
+        mColorPalette.setVisibility(View.VISIBLE);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                mEditorView.setVisibility(View.GONE);
+            }
+        });
+        anim.start();
+    }
+
+    public void hideColorPalette(Point center) {
+        int finalRadius = mEditorView.getWidth();
+        Animator anim = ViewAnimationUtils.createCircularReveal(mEditorView, center.x, center.y, 0, finalRadius);
+        anim.setDuration(300);
+        mEditorView.setVisibility(View.VISIBLE);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                mColorPalette.setVisibility(View.GONE);
+            }
+        });
+        anim.start();
     }
 
     private String getItemTitle() {
@@ -173,6 +236,19 @@ public class EditorFragment extends Fragment {
     public void showNextView(int next) {
         if (mListener != null) {
             mListener.onEditorUpdate(next);
+        }
+    }
+
+    public void setNewEvent(Event event) {
+        mColorPalette.setVisibility(View.GONE);
+        if(event != null) {
+            mTitleText.setText(event.get_title());
+            mFavorite.setSelected(event.is_favorite());
+            mNotification.setSelected(event.is_notify());
+        } else {
+            mTitleText.setText("");
+            mFavorite.setSelected(true);
+            mNotification.setSelected(true);
         }
     }
 

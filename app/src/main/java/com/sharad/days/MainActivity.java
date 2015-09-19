@@ -26,11 +26,10 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements EditorFragment.OnFragmentInteractionListener, ColorPickerFragment.OnFragmentInteractionListener {
+        implements EditorFragment.OnFragmentInteractionListener {
     private static String LOG_TAG = "MainActivity";
     private EventFragment       _eventList;
     private EditorFragment      _editor;
-    private ColorPickerFragment _colorPicker;
 
     ViewPager _editorViewPager;
 
@@ -62,10 +61,6 @@ public class MainActivity extends AppCompatActivity
         PagerAdapter editorPagerAdapter = new PagerAdapter(getSupportFragmentManager());
         _editor = EditorFragment.newInstance(0);
         editorPagerAdapter.addFragment(_editor, "Add Event");
-
-        _colorPicker = ColorPickerFragment.newInstance(0);
-        editorPagerAdapter.addFragment(_colorPicker, "Pick Color");
-
         _editorViewPager.setAdapter(editorPagerAdapter);
     }
 
@@ -90,7 +85,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showEditorView() {
-        _editorViewPager.setCurrentItem(0);
+        _editor.setNewEvent(null);
         View add_view = findViewById(R.id.addPager);
         View add_icon = findViewById(R.id.action_add);
         int[] location = new int[2];
@@ -146,16 +141,7 @@ public class MainActivity extends AppCompatActivity
                 _eventList.insertEvent(null);
                 hideEditorView();
                 break;
-            case EditorFragment.NEXT_SHOW_PALETTE:
-                FragmentManager fm = getSupportFragmentManager();
-                _editorViewPager.setCurrentItem(1);
-                break;
         }
-    }
-
-    @Override
-    public void onColorPicked(int colorId) {
-        _editorViewPager.setCurrentItem(0);
     }
 
     static class PagerAdapter extends FragmentPagerAdapter {

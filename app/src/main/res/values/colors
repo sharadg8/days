@@ -11,4 +11,16 @@
 
     <color name="action_circle">#DCDCDC</color>
 
+
+    <color name="palette0">#F44336</color>
+    <color name="palette1">#E91E63</color>
+    <color name="palette2">#9C27B0</color>
+    <color name="palette3">#673AB7</color>
+    <color name="palette4">#3F51B5</color>
+    <color name="palette5">#2196F3</color>
+    <color name="palette6">#009688</color>
+    <color name="palette7">#43A047</color>
+    <color name="palette8">#880E4F</color>
+    <color name="palette9">#795548</color>
+
 </resources>
