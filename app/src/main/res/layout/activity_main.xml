@@ -23,88 +23,12 @@
         android:layout_height="match_parent"
         android:background="?attr/colorPrimaryDark"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-    <LinearLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/addPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:background="@android:color/white"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
-        android:visibility="gone"
+        android:layout_height="165dp"
         android:elevation="6dp"
-        android:id="@+id/view_add_new" >
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_title"
-            android:capitalize="words"
-            android:hint="Title" />
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_date"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:hint="Date" />
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1px"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_palette"
-                android:layout_alignParentLeft="true"
-                android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_style_black_24dp"
-                android:tint="?attr/colorPrimary"/>
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_favorite"
-                android:layout_toRightOf="@+id/btn_palette"
-                android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_favorite_black_24dp"
-                android:tint="?attr/colorPrimary"/>
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_notification"
-                android:layout_toRightOf="@+id/btn_favorite"
-                android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_notifications_black_24dp"
-                android:tint="?attr/colorPrimary"/>
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_save"
-                android:layout_alignParentRight="true"
-                android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_check_black_24dp"
-                android:tint="?attr/colorPrimary"/>
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_cancel"
-                android:layout_toLeftOf="@+id/btn_save"
-                android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_clear_black_24dp"
-                android:tint="?attr/colorPrimary"/>
-        </RelativeLayout>
-    </LinearLayout>
+        android:visibility="gone"
+        android:background="@android:color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </android.support.design.widget.CoordinatorLayout>

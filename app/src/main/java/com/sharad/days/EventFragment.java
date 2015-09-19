@@ -74,6 +74,11 @@ public class EventFragment extends Fragment {
         );
     }
 
+    public void insertEvent(Event event) {
+        updateItemList();
+        _adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
