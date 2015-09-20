@@ -17,7 +17,9 @@
 package com.sharad.days;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -28,6 +30,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * This fragment inflates a layout with two Floating Action Buttons and acts as a listener to
@@ -95,7 +100,22 @@ public class EventFragment extends Fragment {
 
     private void updateItemList() {
         if(_db != null) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+            String strOrder = sp.getString("sort_order", "0");
+
+            boolean elapsed = sp.getBoolean("show_elapsed", true);
+            if(!elapsed) {
+                _where = DataProvider.KEY_EVENT_DATE + " > " + System.currentTimeMillis();
+            } else {
+                _where = null;
+            }
+
             _db.getEvents(_adapter.getItemList(), _where);
+            Collections.sort(_adapter.getItemList());
+
+            if(strOrder.equals("1")) {
+                Collections.reverse(_adapter.getItemList());
+            }
             _adapter.notifyDataSetChanged();
         }
     }

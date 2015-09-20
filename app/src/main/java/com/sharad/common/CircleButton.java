@@ -1,4 +1,4 @@
-package com.sharad.days;
+package com.sharad.common;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -12,10 +12,12 @@ import android.view.View;
 import android.widget.Checkable;
 import android.widget.ImageView;
 
+import com.sharad.days.R;
+
 /**
  * Created by Sharad on 19-Sep-15.
  */
-public class CircleButton extends ImageView implements Checkable, View.OnClickListener{
+public class CircleButton extends ImageView implements Checkable {
 
     private static final int PRESSED_COLOR_LIGHTUP = 255 / 25;
     private static final int PRESSED_RING_ALPHA = 75;
@@ -43,7 +45,6 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
     private static final int[] CHECKED_STATE_SET = {
             android.R.attr.state_checked
     };
-    private View.OnClickListener clickListener;
 
     public CircleButton(Context context) {
         super(context);
@@ -72,6 +73,7 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
     public boolean isChecked() {
         return mChecked;
     }
+
     public void setChecked(boolean checked) {
         if (mChecked != checked) {
             mChecked = checked;
@@ -89,20 +91,6 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
     }
 
     @Override
-    public void onClick(View v) {
-        toggle();
-    }
-
-    @Override
-    public void setOnClickListener(OnClickListener l) {
-        if (l == this) {
-            super.setOnClickListener(l);
-        } else {
-            clickListener = l;
-        }
-    }
-
-    @Override
     public void setPressed(boolean pressed) {
         super.setPressed(pressed);
 
@@ -114,6 +102,7 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
             showPressedRing();
         } else {
             hidePressedRing();
+            toggle();
         }
     }
 
@@ -121,9 +110,6 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
     protected void onDraw(Canvas canvas) {
         canvas.drawCircle(centerX, centerY, pressedRingRadius + animationProgress, focusPaint);
         canvas.drawCircle(centerX, centerY, outerRadius - pressedRingWidth, circlePaint);
-        if(!mChecked) {
-            //canvas.drawCircle(centerX, centerY, outerRadius - (3 * pressedRingWidth), whitePaint);
-        }
         super.onDraw(canvas);
     }
 
@@ -210,7 +196,6 @@ public class CircleButton extends ImageView implements Checkable, View.OnClickLi
 
         mChecked = false;
         setImageDrawable(null);
-        setOnClickListener(this);
     }
 
     private int getHighlightColor(int color, int amount) {

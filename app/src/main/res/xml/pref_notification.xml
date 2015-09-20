@@ -3,15 +3,32 @@
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
     <CheckBoxPreference
-        android:key="notifications_new_message"
-        android:title="@string/pref_title_new_message_notifications"
-        android:defaultValue="true" />
+        android:key="notifications_enable"
+        android:title="@string/pref_title_enable_notifications"
+        android:defaultValue="false"
+        android:enabled="false" />
+
+    <ListPreference
+        android:dependency="notifications_enable"
+        android:key="notification_before"
+        android:title="@string/pref_title_notification_before"
+        android:defaultValue="1"
+        android:entries="@array/pref_notification_before_titles"
+        android:entryValues="@array/pref_notification_before_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+        
+    <com.sharad.common.TimePreference
+        android:dependency="notifications_enable"
+        android:key="notification_time"
+        android:title="@string/pref_title_notification_time"
+        android:defaultValue="09:00 AM" />
 
     <!-- Allows the user to choose a ringtone in the 'notification' category. -->
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
     <RingtonePreference
-        android:dependency="notifications_new_message"
+        android:dependency="notifications_enable"
         android:key="notifications_new_message_ringtone"
         android:title="@string/pref_title_ringtone"
         android:ringtoneType="notification"
@@ -19,7 +36,7 @@
 
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <CheckBoxPreference
-        android:dependency="notifications_new_message"
+        android:dependency="notifications_enable"
         android:key="notifications_new_message_vibrate"
         android:title="@string/pref_title_vibrate"
         android:defaultValue="true" />

@@ -3,22 +3,21 @@ package com.sharad.days;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
+
+import com.sharad.common.CircleButton;
+import com.sharad.common.DatePickerFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,10 +45,10 @@ public class EditorFragment extends Fragment {
     private EditText    mDateText;
     private RelativeLayout  mColorPalette;
     private LinearLayout    mEditorView;
+    private LinearLayout    mMaskView;
+    private int             mColorId;
     DataProvider _db;
-    int mYear;
-    int mMonth;
-    int mDay;
+    private Date mDate;
 
     public final static int NEXT_CLOSE_EDITOR = 0;
     public final static int NEXT_ADDED_EDITOR = 1;
@@ -106,8 +105,8 @@ public class EditorFragment extends Fragment {
         mFavorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 mFavorite.setSelected(!mFavorite.isSelected());
-                int resId = mFavorite.isSelected() ? R.color.primary : R.color.primary_light;
-                mFavorite.setColorFilter(getResources().getColor(resId));
+                float alpha = mFavorite.isSelected() ? 1.0f : 0.3f;
+                mFavorite.setAlpha(alpha);
             }
         });
 
@@ -116,8 +115,8 @@ public class EditorFragment extends Fragment {
         mNotification.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 mNotification.setSelected(!mNotification.isSelected());
-                int resId = mNotification.isSelected() ? R.color.primary : R.color.primary_light;
-                mNotification.setColorFilter(getResources().getColor(resId));
+                float alpha = mNotification.isSelected() ? 1.0f : 0.3f;
+                mNotification.setAlpha(alpha);
             }
         });
 
@@ -127,7 +126,7 @@ public class EditorFragment extends Fragment {
                 String title = getItemTitle();
                 if(title.length() > 0) {
                     _db.insertEvent(new Event(0, mTitleText.getText().toString(),
-                            new Date(mYear, mMonth, mDay), 0,
+                            mDate, mColorId,
                             mNotification.isSelected(), mFavorite.isSelected()));
                     showNextView(NEXT_ADDED_EDITOR);
                 }
@@ -143,29 +142,16 @@ public class EditorFragment extends Fragment {
 
         mTitleText = (EditText) rootView.findViewById(R.id.txt_title);
 
-        final SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
         Calendar cal = Calendar.getInstance();
+        mDate = cal.getTime();
         mDateText = (EditText) rootView.findViewById(R.id.txt_date);
-        mDateText.setText(df.format(cal.getTime()));
+        mDateText.setText(df.format(mDate));
         mDateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar mcurrentDate = Calendar.getInstance();
-                mYear = mcurrentDate.get(Calendar.YEAR);
-                mMonth = mcurrentDate.get(Calendar.MONTH);
-                mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog mDatePicker = new DatePickerDialog(getActivity().getApplicationContext(), new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker datepicker, int year, int month, int day) {
-                        EditText field = (EditText) rootView.findViewById(R.id.txt_date);
-                        Calendar cal = Calendar.getInstance();
-                        cal.set(year, month, day);
-                        field.setText(df.format(cal.getTime()));
-                        mYear = year;
-                        mMonth = month;
-                        mDay = day;
-                    }
-                }, mYear, mMonth, mDay);
-                mDatePicker.show();
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.show(getFragmentManager(), "datePicker");
             }
         });
 
@@ -174,18 +160,34 @@ public class EditorFragment extends Fragment {
 
         mEditorView = (LinearLayout) rootView.findViewById(R.id.view_add_new);
         mEditorView.setVisibility(View.VISIBLE);
+        mColorId = getResources().getColor(R.color.palette5);
+        mEditorView.setBackgroundColor(mColorId);
+
+        mMaskView = (LinearLayout) rootView.findViewById(R.id.maskPalette);
+        mMaskView.setVisibility(View.GONE);
 
         configurePaletteButton(rootView, R.id.palette_cb0, R.color.palette0);
+        configurePaletteButton(rootView, R.id.palette_cb1, R.color.palette1);
+        configurePaletteButton(rootView, R.id.palette_cb2, R.color.palette2);
+        configurePaletteButton(rootView, R.id.palette_cb3, R.color.palette3);
+        configurePaletteButton(rootView, R.id.palette_cb4, R.color.palette4);
+        configurePaletteButton(rootView, R.id.palette_cb5, R.color.palette5);
+        configurePaletteButton(rootView, R.id.palette_cb6, R.color.palette6);
+        configurePaletteButton(rootView, R.id.palette_cb7, R.color.palette7);
+        configurePaletteButton(rootView, R.id.palette_cb8, R.color.palette8);
+        configurePaletteButton(rootView, R.id.palette_cb9, R.color.palette9);
     }
 
-    private void configurePaletteButton(View rootView, int palette_cb0, int palette0) {
-        final ImageView cb = (ImageView) rootView.findViewById(palette_cb0);
+    private void configurePaletteButton(View rootView, int palette_cb, final int color) {
+        final CircleButton cb = (CircleButton) rootView.findViewById(palette_cb);
         cb.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 int[] location = new int[2];
                 cb.getLocationOnScreen(location);
-                Point center = new Point(location[0], location[1]);
-                hideColorPalette(center);
+                mColorId = getResources().getColor(color);
+                mEditorView.setBackgroundColor(mColorId);
+                mMaskView.setBackgroundColor(mColorId);
+                hideColorPalette(new Point(location[0] + 60, location[1] - 100));
             }
         });
     }
@@ -199,26 +201,20 @@ public class EditorFragment extends Fragment {
         Animator anim = ViewAnimationUtils.createCircularReveal(mColorPalette, center.x, center.y, 0, finalRadius);
         anim.setDuration(300);
         mColorPalette.setVisibility(View.VISIBLE);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mEditorView.setVisibility(View.GONE);
-            }
-        });
         anim.start();
     }
 
     public void hideColorPalette(Point center) {
-        int finalRadius = mEditorView.getWidth();
-        Animator anim = ViewAnimationUtils.createCircularReveal(mEditorView, center.x, center.y, 0, finalRadius);
+        int finalRadius = mMaskView.getWidth();
+        Animator anim = ViewAnimationUtils.createCircularReveal(mMaskView, center.x, center.y, 0, finalRadius);
         anim.setDuration(300);
-        mEditorView.setVisibility(View.VISIBLE);
+        mMaskView.setVisibility(View.VISIBLE);
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mColorPalette.setVisibility(View.GONE);
+                mMaskView.setVisibility(View.GONE);
             }
         });
         anim.start();
@@ -241,14 +237,20 @@ public class EditorFragment extends Fragment {
 
     public void setNewEvent(Event event) {
         mColorPalette.setVisibility(View.GONE);
+        mMaskView.setVisibility(View.GONE);
+        SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
         if(event != null) {
             mTitleText.setText(event.get_title());
             mFavorite.setSelected(event.is_favorite());
             mNotification.setSelected(event.is_notify());
+            mDateText.setText(df.format(event.get_startDate()));
         } else {
             mTitleText.setText("");
             mFavorite.setSelected(true);
             mNotification.setSelected(true);
+            Calendar c = Calendar.getInstance();
+            mDate = c.getTime();
+            mDateText.setText(df.format(mDate));
         }
     }
 
@@ -282,6 +284,12 @@ public class EditorFragment extends Fragment {
         mListener = null;
     }
 
+    public void dateSelected(int year, int month, int day) {
+        mDate = new Date(year - 1900, month, day);
+        SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
+        mDateText.setText(df.format(mDate));
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -295,5 +303,4 @@ public class EditorFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         public void onEditorUpdate(int next);
     }
-
 }

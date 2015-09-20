@@ -32,10 +32,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         RecyclerItemViewHolder holder = (RecyclerItemViewHolder) viewHolder;
-        Event event = mItemList.get(position);
-        holder.setTitle(event.get_title());
-        holder.setDays("" + event.get_dayCount());
         holder.showButtons(position == mSelectedPos);
+        holder.setupView(mItemList.get(position));
     }
 
     @Override

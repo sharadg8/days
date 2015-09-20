@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 
+import com.sharad.common.DatePickerFragment;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,7 +28,8 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements EditorFragment.OnFragmentInteractionListener {
+        implements EditorFragment.OnFragmentInteractionListener,
+        DatePickerFragment.OnFragmentInteractionListener {
     private static String LOG_TAG = "MainActivity";
     private EventFragment       _eventList;
     private EditorFragment      _editor;
@@ -142,6 +145,11 @@ public class MainActivity extends AppCompatActivity
                 hideEditorView();
                 break;
         }
+    }
+
+    @Override
+    public void dateSelected(int year, int month, int day) {
+        _editor.dateSelected(year, month, day);
     }
 
     static class PagerAdapter extends FragmentPagerAdapter {

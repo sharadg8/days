@@ -8,10 +8,10 @@ import java.util.Date;
 /**
  * Created by Sharad on 28-Aug-15.
  */
-public class Event {
+public class Event implements Comparable<Event>{
     private long   _id;
 	private Date   _startDate;
-    private String _title;
+    private String _title, _dayDir;
     private boolean _notify, _favorite;
     private int    _colorId;
     private int    _dayCount;
@@ -38,7 +38,10 @@ public class Event {
         _notify = notify;
         _favorite = favorite;
 
-        _dayCount = 36;
+        long diff = System.currentTimeMillis() - _startDate.getTime();
+        float days = (float) diff / (24 * 60 * 60 * 1000);
+        _dayCount = (int) Math.abs(days);
+        _dayDir = (days < 0.0f) ? "Togo" : ((days > 0.0f) ? "Ago" : "");
 
         _state = STATE_NORMAL;
     }
@@ -70,5 +73,10 @@ public class Event {
             df = new SimpleDateFormat("dd/MM/yyyy");
         }
         return df.format(cal.getTime());
+    }
+
+    @Override
+    public int compareTo(Event another) {
+        return (this._dayCount < another._dayCount) ? -1 : 1;
     }
 }
