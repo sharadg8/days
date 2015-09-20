@@ -24,7 +24,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,21 +31,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * This fragment inflates a layout with two Floating Action Buttons and acts as a listener to
  * changes on them.
  */
-public class EventFragment extends Fragment {
+public class EventsFragment extends Fragment {
     private DataProvider _db;
     private String _where;
     private RecyclerAdapter _adapter;
-    private final static String TAG = "EventFragment";
-    public final static String ITEMS_QUERY_KEY = "EventFragment$queryKey";
+    private final static String TAG = "EventsFragment";
+    public final static String ITEMS_QUERY_KEY = "EventsFragment$queryKey";
 
-    public static EventFragment createInstance(String where) {
-        EventFragment fragment = new EventFragment();
+    public static EventsFragment createInstance(String where) {
+        EventsFragment fragment = new EventsFragment();
         Bundle bundle = new Bundle();
         bundle.putString(ITEMS_QUERY_KEY, where);
         fragment.setArguments(bundle);
@@ -72,8 +70,19 @@ public class EventFragment extends Fragment {
                 new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        _adapter.setSelectedPos(position);
-                        _adapter.notifyItemChanged(position);
+                        Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                        intent.putExtra(DetailsActivity.ID_KEY, _adapter.getItemList().get(position).get_id());
+
+                        /*
+                        View movingView = getActivity().findViewById(R.id.appBarLayout);
+                        Pair<View, String> pair1 = Pair.create(movingView, movingView.getTransitionName());
+                        movingView = view.findViewById(R.id.dc_progress);
+                        Pair<View, String> pair2 = Pair.create(movingView, movingView.getTransitionName());
+                        */
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                getActivity()
+                        );
+                        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                     }
                 })
         );

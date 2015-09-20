@@ -11,7 +11,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity
         DatePickerFragment.OnFragmentInteractionListener,
         TimePickerFragment.OnFragmentInteractionListener {
     private static String LOG_TAG = "MainActivity";
-    private EventFragment       _eventList;
+    private EventsFragment _eventList;
     private EditorFragment      _editor;
 
     ViewPager _editorViewPager;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     private void initViewPager() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        _eventList = EventFragment.createInstance(null);
+        _eventList = EventsFragment.createInstance(null);
         pagerAdapter.addFragment(_eventList, "List");
         viewPager.setAdapter(pagerAdapter);
 

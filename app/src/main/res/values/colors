@@ -11,15 +11,44 @@
     <color name="divider">#000000</color>
 
     <color name="palette0">#F44336</color>
+    <color name="dark_palette0">#B71C1C</color>
+    <color name="light_palette0">#FF5252</color>
+
     <color name="palette1">#E91E63</color>
+    <color name="dark_palette1">#880E4F</color>
+    <color name="light_palette1">#FF4081</color>
+
     <color name="palette2">#9C27B0</color>
+    <color name="dark_palette2">#4A148C</color>
+    <color name="light_palette2">#E040FB</color>
+
     <color name="palette3">#673AB7</color>
+    <color name="dark_palette3">#311B92</color>
+    <color name="light_palette3">#7C4DFF</color>
+
     <color name="palette4">#3F51B5</color>
+    <color name="dark_palette4">#1A237E</color>
+    <color name="light_palette4">#536DFE</color>
+
     <color name="palette5">#2196F3</color>
+    <color name="dark_palette5">#0D47A1</color>
+    <color name="light_palette5">#448AFF</color>
+
     <color name="palette6">#009688</color>
-    <color name="palette7">#43A047</color>
-    <color name="palette8">#880E4F</color>
-    <color name="palette9">#795548</color>
+    <color name="dark_palette6">#004D40</color>
+    <color name="light_palette6">#009688</color>
+
+    <color name="palette7">#2E7D32</color>
+    <color name="dark_palette7">#1B5E20</color>
+    <color name="light_palette7">#43A047</color>
+
+    <color name="palette8">#AD1457</color>
+    <color name="dark_palette8">#880E4F</color>
+    <color name="light_palette8">#F06292</color>
+
+    <color name="palette9">#EF6C00</color>
+    <color name="dark_palette9">#E65100</color>
+    <color name="light_palette9">#FF9800</color>
 
     <array name="palette">
         <item>@color/palette0</item>
@@ -32,6 +61,32 @@
         <item>@color/palette7</item>
         <item>@color/palette8</item>
         <item>@color/palette9</item>
+    </array>
+
+    <array name="palette_dark">
+        <item>@color/dark_palette0</item>
+        <item>@color/dark_palette1</item>
+        <item>@color/dark_palette2</item>
+        <item>@color/dark_palette3</item>
+        <item>@color/dark_palette4</item>
+        <item>@color/dark_palette5</item>
+        <item>@color/dark_palette6</item>
+        <item>@color/dark_palette7</item>
+        <item>@color/dark_palette8</item>
+        <item>@color/dark_palette9</item>
+    </array>
+
+    <array name="palette_light">
+        <item>@color/light_palette0</item>
+        <item>@color/light_palette1</item>
+        <item>@color/light_palette2</item>
+        <item>@color/light_palette3</item>
+        <item>@color/light_palette4</item>
+        <item>@color/light_palette5</item>
+        <item>@color/light_palette6</item>
+        <item>@color/light_palette7</item>
+        <item>@color/light_palette8</item>
+        <item>@color/light_palette9</item>
     </array>
 
 </resources>
