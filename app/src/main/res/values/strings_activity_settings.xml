@@ -43,7 +43,7 @@
     </string-array>
 
     <string name="pref_title_data_delete">Clear Data</string>
-    <string name="pref_data_delete_msg">Delete all deposits?</string>
+    <string name="pref_data_delete_msg">Delete all events?</string>
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>

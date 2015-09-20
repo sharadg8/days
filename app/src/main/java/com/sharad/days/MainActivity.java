@@ -2,6 +2,7 @@ package com.sharad.days;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -18,8 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 
 import com.sharad.common.DatePickerFragment;
+import com.sharad.common.TimePickerFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +32,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements EditorFragment.OnFragmentInteractionListener,
-        DatePickerFragment.OnFragmentInteractionListener {
+        DatePickerFragment.OnFragmentInteractionListener,
+        TimePickerFragment.OnFragmentInteractionListener {
     private static String LOG_TAG = "MainActivity";
     private EventFragment       _eventList;
     private EditorFragment      _editor;
@@ -85,6 +89,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
         anim.start();
+
+        InputMethodManager inputMethodManager = (InputMethodManager)  getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
     private void showEditorView() {
@@ -140,7 +147,6 @@ public class MainActivity extends AppCompatActivity
                 hideEditorView();
                 break;
             case EditorFragment.NEXT_ADDED_EDITOR:
-                // notify recycler
                 _eventList.insertEvent(null);
                 hideEditorView();
                 break;
@@ -150,6 +156,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void dateSelected(int year, int month, int day) {
         _editor.dateSelected(year, month, day);
+    }
+
+    @Override
+    public void timeSelected(int hourOfDay, int minute) {
+        _editor.timeSelected(hourOfDay, minute);
     }
 
     static class PagerAdapter extends FragmentPagerAdapter {

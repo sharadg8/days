@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="6dp"
     tools:context="com.sharad.days.EditorFragment">
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,28 +15,43 @@
         android:paddingRight="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="8dp"
-        android:elevation="6dp"
         android:id="@+id/view_add_new" >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/txt_title"
             android:capitalize="words"
-            android:hint="Title"
+            android:hint="Enter Title"
             android:maxLength="25"
             android:singleLine="true"
-            android:textColorHint="@color/hint_text"
-            android:textColor="@color/primary_text"/>
-        <EditText
+            android:textSize="16sp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textCursorDrawable="@drawable/cursor"
+            android:background="@android:color/transparent"
+            android:textColorHint="@android:color/white"
+            android:textColor="@android:color/white"/>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_date"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:hint="Date"
-            android:singleLine="true"
-            android:textColorHint="@color/hint_text"
-            android:textColor="@color/primary_text" />
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_date"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_alignParentLeft="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_time"
+                android:text="09:00 am"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
         <View
             android:layout_width="wrap_content"
             android:layout_height="1px"
@@ -53,7 +69,7 @@
                 android:layout_alignParentLeft="true"
                 android:padding="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_style_black_24dp"
+                android:src="@drawable/ic_palette_black_24dp"
                 android:tint="@android:color/white"/>
             <ImageButton
                 android:layout_width="wrap_content"
@@ -93,111 +109,25 @@
                 android:tint="@android:color/white"/>
         </RelativeLayout>
     </LinearLayout>
-
     <RelativeLayout
         android:id="@+id/colorPicker"
         android:background="@color/primary_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="6dp"
-        android:clickable="true">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb0"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette0"/>
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb1"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette1" />
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb2"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette2" />
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb3"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette3" />
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb4"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette4" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb5"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette5"/>
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb6"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette6" />
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb7"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette7" />
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb8"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette8" />
-                    <com.sharad.common.CircleButton
-                        android:id="@+id/palette_cb9"
-                        android:layout_width="@dimen/color_circle_diameter"
-                        android:layout_height="@dimen/color_circle_diameter"
-                        android:src="@drawable/ic_check_black_24dp"
-                        app:cb_background="@color/primary_light"
-                        app:cb_color="@color/palette9" />
-                </LinearLayout>
-            </LinearLayout>
-        </RelativeLayout>
-    </RelativeLayout>
-    <LinearLayout
-        android:id="@+id/maskPalette"
+        android:clickable="true"
+        android:visibility="gone"/>
+    <RelativeLayout
+        android:id="@+id/labelPicker"
         android:background="@color/primary_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="6dp"
+        android:clickable="true"
+        android:visibility="gone"/>
+    <FrameLayout
+        android:id="@+id/maskTransition"
+        android:background="@color/primary_light"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
         android:visibility="gone"/>
 </RelativeLayout>

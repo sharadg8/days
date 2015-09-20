@@ -11,26 +11,33 @@ import java.util.Date;
 public class Event implements Comparable<Event>{
     private long   _id;
 	private Date   _startDate;
-    private String _title, _dayDir;
-    private boolean _notify, _favorite;
+    private String _title;
+    private int    _notify, _favorite;
     private int    _colorId;
-    private int    _dayCount;
+    private int    _dayCount, _agoTogo;
 
-    private int    _state;
-    
-	public static final boolean NOTIFICATION_OFF = false;
-    public static final boolean NOTIFICATION_ON  = true;
+    public static final int[] LabelArray = {
+            R.drawable.ic_favorite_black_24dp,
+            R.drawable.ic_cake_black_24dp,
+            R.drawable.ic_star_black_24dp,
+            R.drawable.ic_directions_bus_black_24dp,
+            R.drawable.ic_school_black_24dp,
+            R.drawable.ic_timer_black_24dp,
+            R.drawable.ic_account_balance_black_24dp,
+            R.drawable.ic_shopping_cart_black_24dp,
+            R.drawable.ic_redeem_black_24dp,
+            R.drawable.ic_event_seat_black_24dp,
+            R.drawable.ic_flight_takeoff_black_24dp,
+            R.drawable.ic_attach_money_black_24dp,
+            R.drawable.ic_thumb_up_black_24dp,
+            R.drawable.ic_thumb_down_black_24dp,
+            R.drawable.ic_movie_black_24dp,
+            R.drawable.ic_account_balance_black_24dp,
+            R.drawable.ic_style_black_24dp,
+            R.drawable.ic_notifications_black_24dp,
+    };
 
-    public static final boolean FEVORITE_OFF = false;
-    public static final boolean FEVORITE_ON  = true;
-
-    public static final int STATE_NORMAL     = 0;
-    public static final int STATE_EXPANDED   = 1;
-    public static final int STATE_EDIT       = 2;
-    public static final int STATE_DELETE     = 3;
-    public static final int STATE_COLOR_PICK = 4;
-
-    Event(long id, String title, Date stDate, int colId, boolean notify, boolean favorite) {
+    Event(long id, String title, Date stDate, int colId, int notify, int favorite) {
         _id = id;
         _title = title;
         _startDate = stDate;
@@ -41,9 +48,8 @@ public class Event implements Comparable<Event>{
         long diff = System.currentTimeMillis() - _startDate.getTime();
         float days = (float) diff / (24 * 60 * 60 * 1000);
         _dayCount = (int) Math.abs(days);
-        _dayDir = (days < 0.0f) ? "Togo" : ((days > 0.0f) ? "Ago" : "");
-
-        _state = STATE_NORMAL;
+        _agoTogo = (days > 0.9f) ? R.drawable.ic_previous_black_24dp :
+                ((days < 0.9f) ? R.drawable.ic_next_black_24dp : 0);
     }
 
 	public void set_id(long id) {             _id = id;      }
@@ -51,26 +57,20 @@ public class Event implements Comparable<Event>{
 
     public Date get_startDate() {      return _startDate;    }
     public String get_title() {        return _title;        }
-    public boolean is_favorite() {     return _favorite;     }
-    public boolean is_notify() {       return _notify;       }
+    public int get_favorite() {         return _favorite;     }
+    public int get_notify() {           return _notify;       }
     public int get_colorId() {         return _colorId;      }
     public int get_dayCount() {        return _dayCount;     }
+    public int get_agoTogo() {        return _agoTogo;     }
 
-    public int get_state() {           return _state;        }
-    public void set_state(int state) {        _state = state;}
-
-    public String get_info() {
-        return " Sample info text";
-    }
-
-    public String get_startDateText() {
+    public String get_dateText() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(_startDate);
         final SimpleDateFormat df;
         if(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
-            df = new SimpleDateFormat("dd MMM");
+            df = new SimpleDateFormat("dd MMMM");
         } else {
-            df = new SimpleDateFormat("dd/MM/yyyy");
+            df = new SimpleDateFormat("MMMM dd, yyyy");
         }
         return df.format(cal.getTime());
     }

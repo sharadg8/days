@@ -2,22 +2,30 @@ package com.sharad.days;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.sharad.common.CircleButton;
 import com.sharad.common.DatePickerFragment;
+import com.sharad.common.TimePickerFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,11 +50,15 @@ public class EditorFragment extends Fragment {
     private ImageButton mSave;
     private ImageButton mCancel;
     private EditText    mTitleText;
-    private EditText    mDateText;
-    private RelativeLayout  mColorPalette;
+    private TextView    mDateText;
+    private TextView    mTimeText;
+    private RelativeLayout  mColorPicker;
+    private RelativeLayout  mLabelPicker;
     private LinearLayout    mEditorView;
-    private LinearLayout    mMaskView;
+    private FrameLayout     mMaskView;
     private int             mColorId;
+    private int             mLabelId;
+    private int             mNotifyId;
     DataProvider _db;
     private Date mDate;
 
@@ -96,20 +108,20 @@ public class EditorFragment extends Fragment {
         mPalette = (ImageButton) rootView.findViewById(R.id.btn_palette);
         mPalette.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
-                showColorPalette();
+                showColorPicker();
             }
         });
 
+        mLabelId = Event.LabelArray[0];
         mFavorite = (ImageButton) rootView.findViewById(R.id.btn_favorite);
-        mFavorite.setSelected(true);
+        mFavorite.setImageResource(mLabelId);
         mFavorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
-                mFavorite.setSelected(!mFavorite.isSelected());
-                float alpha = mFavorite.isSelected() ? 1.0f : 0.3f;
-                mFavorite.setAlpha(alpha);
+                showLabelPicker();
             }
         });
 
+        mNotifyId = 0;
         mNotification = (ImageButton) rootView.findViewById(R.id.btn_notification);
         mNotification.setSelected(true);
         mNotification.setOnClickListener(new View.OnClickListener() {
@@ -123,13 +135,10 @@ public class EditorFragment extends Fragment {
         mSave = (ImageButton) rootView.findViewById(R.id.btn_save);
         mSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
-                String title = getItemTitle();
-                if(title.length() > 0) {
-                    _db.insertEvent(new Event(0, mTitleText.getText().toString(),
-                            mDate, mColorId,
-                            mNotification.isSelected(), mFavorite.isSelected()));
-                    showNextView(NEXT_ADDED_EDITOR);
-                }
+                String title = mTitleText.getText().toString();
+                if(title.equals("")) { title = "(No Title)"; }
+                _db.insertEvent(new Event(0, title, mDate, mColorId, mNotifyId, mLabelId));
+                showNextView(NEXT_ADDED_EDITOR);
             }
         });
 
@@ -144,8 +153,10 @@ public class EditorFragment extends Fragment {
 
         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 9);
+        cal.set(Calendar.MINUTE, 0);
         mDate = cal.getTime();
-        mDateText = (EditText) rootView.findViewById(R.id.txt_date);
+        mDateText = (TextView) rootView.findViewById(R.id.txt_date);
         mDateText.setText(df.format(mDate));
         mDateText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,56 +166,152 @@ public class EditorFragment extends Fragment {
             }
         });
 
-        mColorPalette = (RelativeLayout) rootView.findViewById(R.id.colorPicker);
-        mColorPalette.setVisibility(View.GONE);
+        SimpleDateFormat tf = new SimpleDateFormat("hh:mm a");
+        mTimeText = (TextView) rootView.findViewById(R.id.txt_time);
+        mTimeText.setText(tf.format(mDate));
+        mTimeText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerFragment newFragment = new TimePickerFragment();
+                newFragment.setTime(mDate);
+                newFragment.show(getFragmentManager(), "timePicker");
+            }
+        });
 
         mEditorView = (LinearLayout) rootView.findViewById(R.id.view_add_new);
         mEditorView.setVisibility(View.VISIBLE);
         mColorId = getResources().getColor(R.color.palette5);
         mEditorView.setBackgroundColor(mColorId);
 
-        mMaskView = (LinearLayout) rootView.findViewById(R.id.maskPalette);
+        mMaskView = (FrameLayout) rootView.findViewById(R.id.maskTransition);
         mMaskView.setVisibility(View.GONE);
+        mMaskView.setBackgroundColor(mColorId);
 
-        configurePaletteButton(rootView, R.id.palette_cb0, R.color.palette0);
-        configurePaletteButton(rootView, R.id.palette_cb1, R.color.palette1);
-        configurePaletteButton(rootView, R.id.palette_cb2, R.color.palette2);
-        configurePaletteButton(rootView, R.id.palette_cb3, R.color.palette3);
-        configurePaletteButton(rootView, R.id.palette_cb4, R.color.palette4);
-        configurePaletteButton(rootView, R.id.palette_cb5, R.color.palette5);
-        configurePaletteButton(rootView, R.id.palette_cb6, R.color.palette6);
-        configurePaletteButton(rootView, R.id.palette_cb7, R.color.palette7);
-        configurePaletteButton(rootView, R.id.palette_cb8, R.color.palette8);
-        configurePaletteButton(rootView, R.id.palette_cb9, R.color.palette9);
+        setupColorPicker(rootView);
+        setupLabelPicker(rootView);
     }
 
-    private void configurePaletteButton(View rootView, int palette_cb, final int color) {
-        final CircleButton cb = (CircleButton) rootView.findViewById(palette_cb);
+    private void setupLabelPicker(View rootView) {
+        mLabelPicker = (RelativeLayout) rootView.findViewById(R.id.labelPicker);
+        mLabelPicker.setVisibility(View.GONE);
+
+        RelativeLayout relativeLayout = new RelativeLayout(getContext());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        relativeLayout.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+        mLabelPicker.removeAllViews();
+        mLabelPicker.addView(relativeLayout, params);
+
+        LinearLayout linearLayout = new LinearLayout(getContext());
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        relativeLayout.addView(linearLayout, params1);
+
+        for (int i = 0; i < (Event.LabelArray.length/6); i++) {
+            LinearLayout linearLayout1 = new LinearLayout(getContext());
+            linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+            linearLayout.addView(linearLayout1, params1);
+            for (int j = 0; j < 6; j++) {
+                linearLayout1.addView(newLabelButton(Event.LabelArray[i * 5 + j]));
+            }
+        }
+    }
+
+    private View newLabelButton(final int label) {
+        final CircleButton cb = new CircleButton(getContext());
+        int size = getResources().getDimensionPixelSize(R.dimen.color_circle_diameter);
+        cb.setLayoutParams(new LinearLayout.LayoutParams(size, size));
+        cb.setImageResource(label);
+        cb.setColor(mColorId);
+        cb.setColorFilter(Color.WHITE);
         cb.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 int[] location = new int[2];
                 cb.getLocationOnScreen(location);
-                mColorId = getResources().getColor(color);
-                mEditorView.setBackgroundColor(mColorId);
-                mMaskView.setBackgroundColor(mColorId);
-                hideColorPalette(new Point(location[0] + 60, location[1] - 100));
+                mLabelId = label;
+                mFavorite.setImageResource(mLabelId);
+                hidePopupView(mLabelPicker, new Point(location[0] + 60, location[1] - 100));
             }
         });
+        return cb;
     }
 
-    private void showColorPalette() {
+    private void setupColorPicker(View rootView) {
+        mColorPicker = (RelativeLayout) rootView.findViewById(R.id.colorPicker);
+        mColorPicker.setVisibility(View.GONE);
+
+        RelativeLayout relativeLayout = new RelativeLayout(getContext());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        relativeLayout.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+        mColorPicker.removeAllViews();
+        mColorPicker.addView(relativeLayout, params);
+
+        LinearLayout linearLayout = new LinearLayout(getContext());
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        relativeLayout.addView(linearLayout, params1);
+
+        int[] palette = getResources().getIntArray(R.array.palette);
+        for (int i = 0; i < (palette.length/5); i++) {
+            LinearLayout linearLayout1 = new LinearLayout(getContext());
+            linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+            linearLayout.addView(linearLayout1, params1);
+            for (int j = 0; j < 5; j++) {
+                linearLayout1.addView(newPaletteButton(palette[i*5+j]));
+            }
+        }
+    }
+
+    private CircleButton newPaletteButton(final int color) {
+        final CircleButton cb = new CircleButton(getContext());
+        int size = getResources().getDimensionPixelSize(R.dimen.color_circle_diameter);
+        cb.setLayoutParams(new LinearLayout.LayoutParams(size, size));
+        cb.setColor(color);
+        cb.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                int[] location = new int[2];
+                cb.getLocationOnScreen(location);
+                mColorId = color;
+                mEditorView.setBackgroundColor(mColorId);
+                mMaskView.setBackgroundColor(mColorId);
+                hidePopupView(mColorPicker, new Point(location[0] + 60, location[1] - 100));
+            }
+        });
+        return cb;
+    }
+
+    private void showColorPicker() {
         int[] location = new int[2];
         mPalette.getLocationOnScreen(location);
         Point center = new Point(location[0], location[1]);
 
-        int finalRadius = Math.max(mColorPalette.getWidth(), mColorPalette.getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(mColorPalette, center.x, center.y, 0, finalRadius);
+        int finalRadius = Math.max(mColorPicker.getWidth(), mColorPicker.getHeight());
+        Animator anim = ViewAnimationUtils.createCircularReveal(mColorPicker, center.x, center.y, 0, finalRadius);
         anim.setDuration(300);
-        mColorPalette.setVisibility(View.VISIBLE);
+        mColorPicker.setVisibility(View.VISIBLE);
         anim.start();
     }
 
-    public void hideColorPalette(Point center) {
+    private void showLabelPicker() {
+        int[] location = new int[2];
+        mFavorite.getLocationOnScreen(location);
+        Point center = new Point(location[0], location[1]);
+
+        int finalRadius = Math.max(mLabelPicker.getWidth(), mLabelPicker.getHeight());
+        Animator anim = ViewAnimationUtils.createCircularReveal(mLabelPicker, center.x, center.y, 0, finalRadius);
+        anim.setDuration(300);
+        mLabelPicker.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+
+    public void hidePopupView(final View view, Point center) {
         int finalRadius = mMaskView.getWidth();
         Animator anim = ViewAnimationUtils.createCircularReveal(mMaskView, center.x, center.y, 0, finalRadius);
         anim.setDuration(300);
@@ -213,20 +320,11 @@ public class EditorFragment extends Fragment {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                mColorPalette.setVisibility(View.GONE);
+                view.setVisibility(View.GONE);
                 mMaskView.setVisibility(View.GONE);
             }
         });
         anim.start();
-    }
-
-    private String getItemTitle() {
-        mTitleText.setError(null);
-        if(mTitleText.getText().toString().trim().length() == 0) {
-            mTitleText.setError("Enter Title");
-            return "";
-        }
-        return mTitleText.getText().toString();
     }
 
     public void showNextView(int next) {
@@ -236,21 +334,26 @@ public class EditorFragment extends Fragment {
     }
 
     public void setNewEvent(Event event) {
-        mColorPalette.setVisibility(View.GONE);
+        mColorPicker.setVisibility(View.GONE);
+        mLabelPicker.setVisibility(View.GONE);
         mMaskView.setVisibility(View.GONE);
         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
+        SimpleDateFormat tf = new SimpleDateFormat("hh:mm a");
         if(event != null) {
             mTitleText.setText(event.get_title());
-            mFavorite.setSelected(event.is_favorite());
-            mNotification.setSelected(event.is_notify());
+            mFavorite.setImageResource(event.get_favorite());
+            //mNotification.setSelected(event.is_notify());
             mDateText.setText(df.format(event.get_startDate()));
+            mTimeText.setText(tf.format(event.get_startDate()));
         } else {
             mTitleText.setText("");
-            mFavorite.setSelected(true);
             mNotification.setSelected(true);
             Calendar c = Calendar.getInstance();
+            c.set(Calendar.HOUR_OF_DAY, 9);
+            c.set(Calendar.MINUTE, 0);
             mDate = c.getTime();
             mDateText.setText(df.format(mDate));
+            mTimeText.setText(tf.format(mDate));
         }
     }
 
@@ -285,9 +388,23 @@ public class EditorFragment extends Fragment {
     }
 
     public void dateSelected(int year, int month, int day) {
-        mDate = new Date(year - 1900, month, day);
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DATE, day);
+        mDate = c.getTime();
         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
         mDateText.setText(df.format(mDate));
+    }
+
+    public void timeSelected(int hourOfDay, int minute) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(mDate);
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
+        mDate = c.getTime();
+        SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+        mTimeText.setText(df.format(mDate));
     }
 
     /**

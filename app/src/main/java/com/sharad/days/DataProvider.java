@@ -82,8 +82,8 @@ public class DataProvider {
         content.put(KEY_EVENT_TITLE    , event.get_title());
         content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
         content.put(KEY_EVENT_COLOR    , event.get_colorId());
-        content.put(KEY_EVENT_NOTIFY   , event.is_notify());
-        content.put(KEY_EVENT_FAVORITE , event.is_favorite());
+        content.put(KEY_EVENT_NOTIFY   , event.get_notify());
+        content.put(KEY_EVENT_FAVORITE , event.get_favorite());
 
         // Insert it into the database.
         return db.insert(DATABASE_TABLE_EVENT, null, content);
@@ -97,8 +97,8 @@ public class DataProvider {
         content.put(KEY_EVENT_TITLE    , event.get_title());
         content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
         content.put(KEY_EVENT_COLOR    , event.get_colorId());
-        content.put(KEY_EVENT_NOTIFY   , event.is_notify());
-        content.put(KEY_EVENT_FAVORITE , event.is_favorite());
+        content.put(KEY_EVENT_NOTIFY   , event.get_notify());
+        content.put(KEY_EVENT_FAVORITE , event.get_favorite());
 
         // Update it into the database.
         return db.update(DATABASE_TABLE_EVENT, content, where, null) != 0;
@@ -119,8 +119,8 @@ public class DataProvider {
         String title 	 = c.getString(c.getColumnIndex(KEY_EVENT_TITLE));
         Date stDate		 = new Date(c.getLong(c.getColumnIndex(KEY_EVENT_DATE)));
         int colorId	     = (int)c.getLong(c.getColumnIndex(KEY_EVENT_COLOR));
-        boolean notify   = (c.getLong(c.getColumnIndex(KEY_EVENT_NOTIFY)) > 0) ? true : false;
-        boolean favorite = (c.getLong(c.getColumnIndex(KEY_EVENT_FAVORITE)) > 0) ? true : false;
+        int notify       = (int)c.getLong(c.getColumnIndex(KEY_EVENT_NOTIFY));
+        int favorite     = (int)c.getLong(c.getColumnIndex(KEY_EVENT_FAVORITE));
 
         Event event = new Event(id, title, stDate, colorId, notify, favorite);
         return event;
