@@ -32,7 +32,7 @@ public class Event implements Comparable<Event>{
             R.drawable.ic_thumb_up_black_24dp,
             R.drawable.ic_thumb_down_black_24dp,
             R.drawable.ic_movie_black_24dp,
-            R.drawable.ic_account_balance_black_24dp,
+            R.drawable.ic_insert_emoticon_black_24dp,
             R.drawable.ic_style_black_24dp,
             R.drawable.ic_notifications_black_24dp,
     };

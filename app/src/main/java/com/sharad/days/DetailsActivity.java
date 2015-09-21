@@ -12,6 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -63,6 +67,22 @@ public class DetailsActivity extends ActionBarActivity {
 
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         coordinatorLayout.setBackgroundColor(paletteLight[index]);
+
+        initViews();
+    }
+
+    private void initViews() {
+        TextView days = (TextView) findViewById(R.id.d_days);
+        TextView date = (TextView) findViewById(R.id.d_date);
+        TextView title = (TextView) findViewById(R.id.d_title);
+        ImageView label = (ImageView) findViewById(R.id.d_label);
+        ImageView agoTogo = (ImageView) findViewById(R.id.d_ago_togo);
+
+        days.setText(""+_event.get_dayCount());
+        date.setText(_event.get_dateText());
+        title.setText(_event.get_title());
+        label.setImageResource(_event.get_favorite());
+        agoTogo.setImageResource(_event.get_agoTogo());
     }
 
     @Override

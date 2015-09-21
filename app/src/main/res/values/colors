@@ -19,8 +19,8 @@
     <color name="light_palette1">#FF4081</color>
 
     <color name="palette2">#9C27B0</color>
-    <color name="dark_palette2">#4A148C</color>
-    <color name="light_palette2">#E040FB</color>
+    <color name="dark_palette2">#8E24AA</color>
+    <color name="light_palette2">#BA68C8</color>
 
     <color name="palette3">#673AB7</color>
     <color name="dark_palette3">#311B92</color>

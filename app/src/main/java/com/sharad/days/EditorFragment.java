@@ -131,6 +131,7 @@ public class EditorFragment extends Fragment {
                 mNotification.setAlpha(alpha);
             }
         });
+        mNotification.setVisibility(View.GONE);
 
         mSave = (ImageButton) rootView.findViewById(R.id.btn_save);
         mSave.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +216,7 @@ public class EditorFragment extends Fragment {
             linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.addView(linearLayout1, params1);
             for (int j = 0; j < 6; j++) {
-                linearLayout1.addView(newLabelButton(Event.LabelArray[i * 5 + j]));
+                linearLayout1.addView(newLabelButton(Event.LabelArray[i * 6 + j]));
             }
         }
     }
