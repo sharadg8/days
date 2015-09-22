@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="6dp"
+    android:clickable="true"
+    android:id="@+id/close_me"
     tools:context="com.sharad.days.EditorFragment">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="165dp"
+        android:elevation="6dp"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:background="@android:color/white"
@@ -113,21 +116,24 @@
         android:id="@+id/colorPicker"
         android:background="@color/primary_light"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="165dp"
+        android:elevation="6dp"
         android:clickable="true"
         android:visibility="gone"/>
     <RelativeLayout
         android:id="@+id/labelPicker"
         android:background="@color/primary_light"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="165dp"
+        android:elevation="6dp"
         android:clickable="true"
         android:visibility="gone"/>
     <FrameLayout
         android:id="@+id/maskTransition"
         android:background="@color/primary_light"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="165dp"
+        android:elevation="6dp"
         android:clickable="true"
         android:visibility="gone"/>
 </RelativeLayout>

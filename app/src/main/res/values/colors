@@ -9,6 +9,7 @@
     <color name="hint_text">#B2B2B2</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#000000</color>
+    <color name="mask_background">#18000000</color>
 
     <color name="palette0">#F44336</color>
     <color name="dark_palette0">#B71C1C</color>

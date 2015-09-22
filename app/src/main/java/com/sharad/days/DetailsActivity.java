@@ -1,5 +1,6 @@
 package com.sharad.days;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
@@ -7,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -107,11 +109,24 @@ public class DetailsActivity extends ActionBarActivity {
                 ActivityCompat.startActivity(this, intent, options.toBundle());
                 return true;
             case R.id.action_delete:
-                DataProvider db = new DataProvider(this);
-                db.open();
-                db.deleteEvent(_event.get_id());
-                db.close();
-                onBackPressed();
+                new AlertDialog.Builder(this)
+                        .setMessage("Delete Event?")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                DataProvider db = new DataProvider(getApplicationContext());
+                                db.open();
+                                db.deleteEvent(_event.get_id());
+                                db.close();
+                                onBackPressed();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .show();
+
                 return true;
         }
 

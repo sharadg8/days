@@ -105,6 +105,13 @@ public class EditorFragment extends Fragment {
     }
 
     private void initView(final View rootView) {
+        RelativeLayout background = (RelativeLayout) rootView.findViewById(R.id.close_me);
+        background.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                showNextView(NEXT_CLOSE_EDITOR);
+            }
+        });
+
         mPalette = (ImageButton) rootView.findViewById(R.id.btn_palette);
         mPalette.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
@@ -112,9 +119,9 @@ public class EditorFragment extends Fragment {
             }
         });
 
-        mLabelId = Event.LabelArray[0];
+        mLabelId = 0;
         mFavorite = (ImageButton) rootView.findViewById(R.id.btn_favorite);
-        mFavorite.setImageResource(mLabelId);
+        mFavorite.setImageResource(Event.LabelArray[0]);
         mFavorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 showLabelPicker();
@@ -154,8 +161,24 @@ public class EditorFragment extends Fragment {
 
         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 9);
-        cal.set(Calendar.MINUTE, 0);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        switch (minute / 15) {
+            case 1:
+                cal.set(Calendar.HOUR_OF_DAY, hour);
+                cal.set(Calendar.HOUR_OF_DAY, hour);
+                cal.set(Calendar.MINUTE, 0);
+                break;
+            case 2:
+            case 3:
+                cal.set(Calendar.HOUR_OF_DAY, hour);
+                cal.set(Calendar.MINUTE, 30);
+                break;
+            default:
+                cal.set(Calendar.HOUR_OF_DAY, hour+1);
+                cal.set(Calendar.MINUTE, 0);
+                break;
+        }
         mDate = cal.getTime();
         mDateText = (TextView) rootView.findViewById(R.id.txt_date);
         mDateText.setText(df.format(mDate));
@@ -232,8 +255,8 @@ public class EditorFragment extends Fragment {
             public void onClick(View button) {
                 int[] location = new int[2];
                 cb.getLocationOnScreen(location);
-                mLabelId = label;
-                mFavorite.setImageResource(mLabelId);
+                mLabelId = Event.getLabelId(label);
+                mFavorite.setImageResource(label);
                 hidePopupView(mLabelPicker, new Point(location[0] + 60, location[1] - 100));
             }
         });

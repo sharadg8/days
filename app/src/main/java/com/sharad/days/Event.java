@@ -44,12 +44,25 @@ public class Event implements Comparable<Event>{
         _colorId = colId;
         _notify = notify;
         _favorite = favorite;
+        if(favorite >= 0 && favorite < LabelArray.length) {
+            _favorite = LabelArray[favorite];
+        }
 
         long diff = System.currentTimeMillis() - _startDate.getTime();
         float days = (float) diff / (24 * 60 * 60 * 1000);
         _dayCount = (int) Math.abs(days);
-        _agoTogo = (days > 0.9f) ? R.drawable.ic_previous_black_24dp :
-                ((days < 0.9f) ? R.drawable.ic_next_black_24dp : 0);
+        _agoTogo = (diff > 0) ? R.drawable.ic_previous_black_24dp : R.drawable.ic_next_black_24dp;
+    }
+
+    public static int getLabelId(int labelResId) {
+        int id = 0;
+        for(int i=0; i<LabelArray.length; i++) {
+            if(labelResId == LabelArray[i]) {
+                id = i;
+                break;
+            }
+        }
+        return id;
     }
 
 	public void set_id(long id) {             _id = id;      }
