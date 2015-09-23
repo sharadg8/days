@@ -2,20 +2,19 @@ package com.sharad.days;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ActionBar;
 import android.app.Activity;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -61,6 +60,7 @@ public class EditorFragment extends Fragment {
     private int             mNotifyId;
     DataProvider _db;
     private Date mDate;
+    private long _eventId;
 
     public final static int NEXT_CLOSE_EDITOR = 0;
     public final static int NEXT_ADDED_EDITOR = 1;
@@ -118,6 +118,13 @@ public class EditorFragment extends Fragment {
                 showColorPicker();
             }
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
+            Drawable rippleDrawable = ta.getDrawable(0);
+            ta.recycle();
+            mPalette.setBackground(rippleDrawable);
+        }
 
         mLabelId = 0;
         mFavorite = (ImageButton) rootView.findViewById(R.id.btn_favorite);
@@ -127,6 +134,13 @@ public class EditorFragment extends Fragment {
                 showLabelPicker();
             }
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
+            Drawable rippleDrawable = ta.getDrawable(0);
+            ta.recycle();
+            mFavorite.setBackground(rippleDrawable);
+        }
 
         mNotifyId = 0;
         mNotification = (ImageButton) rootView.findViewById(R.id.btn_notification);
@@ -139,16 +153,34 @@ public class EditorFragment extends Fragment {
             }
         });
         mNotification.setVisibility(View.GONE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
+            Drawable rippleDrawable = ta.getDrawable(0);
+            ta.recycle();
+            mNotification.setBackground(rippleDrawable);
+        }
 
         mSave = (ImageButton) rootView.findViewById(R.id.btn_save);
         mSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 String title = mTitleText.getText().toString();
                 if(title.equals("")) { title = "(No Title)"; }
-                _db.insertEvent(new Event(0, title, mDate, mColorId, mNotifyId, mLabelId));
+                if(_eventId != -1) {
+                    _db.updateEvent(new Event(_eventId, title, mDate, mColorId, mNotifyId, mLabelId));
+                } else {
+                    _db.insertEvent(new Event(0, title, mDate, mColorId, mNotifyId, mLabelId));
+                }
                 showNextView(NEXT_ADDED_EDITOR);
             }
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
+            Drawable rippleDrawable = ta.getDrawable(0);
+            ta.recycle();
+            mSave.setBackground(rippleDrawable);
+        }
 
         mCancel = (ImageButton) rootView.findViewById(R.id.btn_cancel);
         mCancel.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +188,13 @@ public class EditorFragment extends Fragment {
                 showNextView(NEXT_CLOSE_EDITOR);
             }
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
+            Drawable rippleDrawable = ta.getDrawable(0);
+            ta.recycle();
+            mCancel.setBackground(rippleDrawable);
+        }
 
         mTitleText = (EditText) rootView.findViewById(R.id.txt_title);
 
@@ -245,22 +284,28 @@ public class EditorFragment extends Fragment {
     }
 
     private View newLabelButton(final int label) {
-        final CircleButton cb = new CircleButton(getContext());
-        int size = getResources().getDimensionPixelSize(R.dimen.color_circle_diameter);
-        cb.setLayoutParams(new LinearLayout.LayoutParams(size, size));
-        cb.setImageResource(label);
-        cb.setColor(mColorId);
-        cb.setColorFilter(Color.WHITE);
-        cb.setOnClickListener(new View.OnClickListener() {
+        final ImageButton ib = new ImageButton(getContext());
+        ib.setImageResource(label);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
+            Drawable rippleDrawable = ta.getDrawable(0);
+            ta.recycle();
+            ib.setBackground(rippleDrawable);
+        }
+
+        ib.setColorFilter(getResources().getColor(R.color.primary_dark));
+        ib.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 int[] location = new int[2];
-                cb.getLocationOnScreen(location);
+                ib.getLocationOnScreen(location);
                 mLabelId = Event.getLabelId(label);
                 mFavorite.setImageResource(label);
                 hidePopupView(mLabelPicker, new Point(location[0] + 60, location[1] - 100));
             }
         });
-        return cb;
+        return ib;
     }
 
     private void setupColorPicker(View rootView) {
@@ -312,43 +357,53 @@ public class EditorFragment extends Fragment {
     }
 
     private void showColorPicker() {
-        int[] location = new int[2];
-        mPalette.getLocationOnScreen(location);
-        Point center = new Point(location[0], location[1]);
-
-        int finalRadius = Math.max(mColorPicker.getWidth(), mColorPicker.getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(mColorPicker, center.x, center.y, 0, finalRadius);
-        anim.setDuration(300);
-        mColorPicker.setVisibility(View.VISIBLE);
-        anim.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] location = new int[2];
+            mPalette.getLocationOnScreen(location);
+            Point center = new Point(location[0], location[1]);
+            int finalRadius = Math.max(mColorPicker.getWidth(), mColorPicker.getHeight());
+            Animator anim = ViewAnimationUtils.createCircularReveal(mColorPicker, center.x, center.y, 0, finalRadius);
+            anim.setDuration(300);
+            mColorPicker.setVisibility(View.VISIBLE);
+            anim.start();
+        } else {
+            mColorPicker.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showLabelPicker() {
-        int[] location = new int[2];
-        mFavorite.getLocationOnScreen(location);
-        Point center = new Point(location[0], location[1]);
-
-        int finalRadius = Math.max(mLabelPicker.getWidth(), mLabelPicker.getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(mLabelPicker, center.x, center.y, 0, finalRadius);
-        anim.setDuration(300);
-        mLabelPicker.setVisibility(View.VISIBLE);
-        anim.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int[] location = new int[2];
+            mFavorite.getLocationOnScreen(location);
+            Point center = new Point(location[0], location[1]);
+            int finalRadius = Math.max(mLabelPicker.getWidth(), mLabelPicker.getHeight());
+            Animator anim = ViewAnimationUtils.createCircularReveal(mLabelPicker, center.x, center.y, 0, finalRadius);
+            anim.setDuration(300);
+            mLabelPicker.setVisibility(View.VISIBLE);
+            anim.start();
+        } else {
+            mLabelPicker.setVisibility(View.VISIBLE);
+        }
     }
 
     public void hidePopupView(final View view, Point center) {
-        int finalRadius = mMaskView.getWidth();
-        Animator anim = ViewAnimationUtils.createCircularReveal(mMaskView, center.x, center.y, 0, finalRadius);
-        anim.setDuration(300);
-        mMaskView.setVisibility(View.VISIBLE);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                view.setVisibility(View.GONE);
-                mMaskView.setVisibility(View.GONE);
-            }
-        });
-        anim.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int finalRadius = mMaskView.getWidth();
+            Animator anim = ViewAnimationUtils.createCircularReveal(mMaskView, center.x, center.y, 0, finalRadius);
+            anim.setDuration(300);
+            mMaskView.setVisibility(View.VISIBLE);
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    view.setVisibility(View.GONE);
+                    mMaskView.setVisibility(View.GONE);
+                }
+            });
+            anim.start();
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     public void showNextView(int next) {
@@ -364,21 +419,27 @@ public class EditorFragment extends Fragment {
         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
         SimpleDateFormat tf = new SimpleDateFormat("hh:mm a");
         if(event != null) {
+            _eventId = event.get_id();
             mTitleText.setText(event.get_title());
             mFavorite.setImageResource(event.get_favorite());
             //mNotification.setSelected(event.is_notify());
-            mDateText.setText(df.format(event.get_startDate()));
-            mTimeText.setText(tf.format(event.get_startDate()));
+            mDate = event.get_startDate();
+            mColorId = event.get_colorId();
+            mNotifyId = event.get_notify();
+            mLabelId = event.get_favoriteIndex();
         } else {
+            _eventId = -1;
             mTitleText.setText("");
             mNotification.setSelected(true);
             Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, 9);
             c.set(Calendar.MINUTE, 0);
             mDate = c.getTime();
-            mDateText.setText(df.format(mDate));
-            mTimeText.setText(tf.format(mDate));
         }
+        mDateText.setText(df.format(mDate));
+        mTimeText.setText(tf.format(mDate));
+        mEditorView.setBackgroundColor(mColorId);
+        mMaskView.setBackgroundColor(mColorId);
     }
 
     @Override

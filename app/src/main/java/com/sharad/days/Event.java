@@ -12,7 +12,7 @@ public class Event implements Comparable<Event>{
     private long   _id;
 	private Date   _startDate;
     private String _title;
-    private int    _notify, _favorite;
+    private int    _notify, _favorite, _favoriteIndex;
     private int    _colorId;
     private int    _dayCount, _agoTogo;
 
@@ -23,10 +23,10 @@ public class Event implements Comparable<Event>{
             R.drawable.ic_directions_bus_black_24dp,
             R.drawable.ic_school_black_24dp,
             R.drawable.ic_timer_black_24dp,
-            R.drawable.ic_account_balance_black_24dp,
+            R.drawable.ic_home_black_24dp,
             R.drawable.ic_shopping_cart_black_24dp,
             R.drawable.ic_redeem_black_24dp,
-            R.drawable.ic_event_seat_black_24dp,
+            R.drawable.ic_work_black_24dp,
             R.drawable.ic_flight_takeoff_black_24dp,
             R.drawable.ic_attach_money_black_24dp,
             R.drawable.ic_thumb_up_black_24dp,
@@ -34,7 +34,7 @@ public class Event implements Comparable<Event>{
             R.drawable.ic_movie_black_24dp,
             R.drawable.ic_insert_emoticon_black_24dp,
             R.drawable.ic_style_black_24dp,
-            R.drawable.ic_notifications_black_24dp,
+            R.drawable.ic_call_black_24dp,
     };
 
     Event(long id, String title, Date stDate, int colId, int notify, int favorite) {
@@ -43,6 +43,7 @@ public class Event implements Comparable<Event>{
         _startDate = stDate;
         _colorId = colId;
         _notify = notify;
+        _favoriteIndex = _favorite;
         _favorite = favorite;
         if(favorite >= 0 && favorite < LabelArray.length) {
             _favorite = LabelArray[favorite];
@@ -65,16 +66,17 @@ public class Event implements Comparable<Event>{
         return id;
     }
 
-	public void set_id(long id) {             _id = id;      }
-    public long get_id() {             return _id;           }
+	public void set_id(long id) {             _id = id;       }
+    public long get_id() {             return _id;            }
 
-    public Date get_startDate() {      return _startDate;    }
-    public String get_title() {        return _title;        }
-    public int get_favorite() {         return _favorite;     }
-    public int get_notify() {           return _notify;       }
-    public int get_colorId() {         return _colorId;      }
-    public int get_dayCount() {        return _dayCount;     }
-    public int get_agoTogo() {        return _agoTogo;     }
+    public Date get_startDate() {      return _startDate;     }
+    public String get_title() {        return _title;         }
+    public int get_favorite() {        return _favorite;      }
+    public int get_favoriteIndex() {   return _favoriteIndex; }
+    public int get_notify() {          return _notify;        }
+    public int get_colorId() {         return _colorId;       }
+    public int get_dayCount() {        return _dayCount;      }
+    public int get_agoTogo() {         return _agoTogo;       }
 
     public String get_dateText() {
         Calendar cal = Calendar.getInstance();

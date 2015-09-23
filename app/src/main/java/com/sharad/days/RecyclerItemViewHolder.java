@@ -1,11 +1,8 @@
 package com.sharad.days;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class RecyclerItemViewHolder extends RecyclerView.ViewHolder {

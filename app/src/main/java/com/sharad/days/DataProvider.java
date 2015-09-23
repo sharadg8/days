@@ -89,8 +89,8 @@ public class DataProvider {
         return db.insert(DATABASE_TABLE_EVENT, null, content);
     }
 	
-	public boolean updateEvent(long rowId, Event event) {
-        String where = KEY_EVENT_ROWID + "=" + rowId;
+	public boolean updateEvent(Event event) {
+        String where = KEY_EVENT_ROWID + "=" + event.get_id();
 
         // Create row's data:
         ContentValues content = new ContentValues();

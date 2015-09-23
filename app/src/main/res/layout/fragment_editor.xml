@@ -71,7 +71,6 @@
                 android:id="@+id/btn_palette"
                 android:layout_alignParentLeft="true"
                 android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_palette_black_24dp"
                 android:tint="@android:color/white"/>
             <ImageButton
@@ -80,7 +79,6 @@
                 android:id="@+id/btn_favorite"
                 android:layout_toRightOf="@+id/btn_palette"
                 android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_favorite_black_24dp"
                 android:tint="@android:color/white"/>
             <ImageButton
@@ -89,7 +87,6 @@
                 android:id="@+id/btn_notification"
                 android:layout_toRightOf="@+id/btn_favorite"
                 android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_notifications_black_24dp"
                 android:tint="@android:color/white"/>
             <ImageButton
@@ -98,7 +95,6 @@
                 android:id="@+id/btn_save"
                 android:layout_alignParentRight="true"
                 android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_check_black_24dp"
                 android:tint="@android:color/white"/>
             <ImageButton
@@ -107,7 +103,6 @@
                 android:id="@+id/btn_cancel"
                 android:layout_toLeftOf="@+id/btn_save"
                 android:padding="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_clear_black_24dp"
                 android:tint="@android:color/white"/>
         </RelativeLayout>

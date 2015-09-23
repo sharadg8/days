@@ -6,19 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sharad.days.Event;
-import com.sharad.days.R;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private int mSelectedPos;
     private ArrayList<Event> mItemList;
     public RecyclerAdapter() {
         mItemList = new ArrayList<>();
-        mSelectedPos = -1;
     }
     public ArrayList<Event> getItemList() { return mItemList; }
 
@@ -39,6 +32,4 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         return mItemList == null ? 0 : mItemList.size();
     }
-
-    public void setSelectedPos(int pos) { mSelectedPos = pos; }
 }

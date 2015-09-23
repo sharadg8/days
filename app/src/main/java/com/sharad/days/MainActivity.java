@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity
         implements EditorFragment.OnFragmentInteractionListener,
         DatePickerFragment.OnFragmentInteractionListener,
         TimePickerFragment.OnFragmentInteractionListener {
-    private static String LOG_TAG = "MainActivity";
+    //private static String LOG_TAG = "MainActivity";
     private EventsFragment _eventList;
     private EditorFragment      _editor;
 
@@ -63,49 +64,60 @@ public class MainActivity extends AppCompatActivity
         pagerAdapter.addFragment(_eventList, "List");
         viewPager.setAdapter(pagerAdapter);
 
-        _editorViewPager = (ViewPager) findViewById(R.id.addPager);
+        ViewPager editorViewPager = (ViewPager) findViewById(R.id.addPager);
         PagerAdapter editorPagerAdapter = new PagerAdapter(getSupportFragmentManager());
         _editor = EditorFragment.newInstance(0);
         editorPagerAdapter.addFragment(_editor, "Add Event");
-        _editorViewPager.setAdapter(editorPagerAdapter);
+        editorViewPager.setAdapter(editorPagerAdapter);
     }
 
     private void hideEditorView(){
         final View add_view = findViewById(R.id.addPager);
-        View add_icon = findViewById(R.id.action_add);
-        int[] location = new int[2];
-        add_icon.getLocationOnScreen(location);
-        Point center = new Point(location[0] + 20, 0);
 
-        int initialRadius = add_view.getWidth();
-        Animator anim = ViewAnimationUtils.createCircularReveal(add_view, center.x, center.y, initialRadius, 0);
-        anim.setDuration(300);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                add_view.setVisibility(View.GONE);
-            }
-        });
-        anim.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View add_icon = findViewById(R.id.action_add);
+            int[] location = new int[2];
+            add_icon.getLocationOnScreen(location);
+            Point center = new Point(location[0] + 20, 0);
+            int initialRadius = add_view.getWidth();
+            Animator anim = ViewAnimationUtils.createCircularReveal(add_view, center.x, center.y, initialRadius, 0);
+            anim.setDuration(300);
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    add_view.setVisibility(View.GONE);
+                }
+            });
+            anim.start();
+        } else {
+            add_view.setVisibility(View.GONE);
+        }
 
         InputMethodManager inputMethodManager = (InputMethodManager)  getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        try {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } catch (NullPointerException e) {
+            // do nothing
+        }
     }
 
     private void showEditorView() {
         _editor.setNewEvent(null);
         View add_view = findViewById(R.id.addPager);
-        View add_icon = findViewById(R.id.action_add);
-        int[] location = new int[2];
-        add_icon.getLocationOnScreen(location);
-        Point center = new Point(location[0] + 20, 0);
-
-        int finalRadius = Math.max(add_view.getWidth(), add_view.getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(add_view, center.x, center.y, 0, finalRadius);
-        anim.setDuration(300);
-        add_view.setVisibility(View.VISIBLE);
-        anim.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View add_icon = findViewById(R.id.action_add);
+            int[] location = new int[2];
+            add_icon.getLocationOnScreen(location);
+            Point center = new Point(location[0] + 20, 0);
+            int finalRadius = Math.max(add_view.getWidth(), add_view.getHeight());
+            Animator anim = ViewAnimationUtils.createCircularReveal(add_view, center.x, center.y, 0, finalRadius);
+            anim.setDuration(300);
+            add_view.setVisibility(View.VISIBLE);
+            anim.start();
+        } else {
+            add_view.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -124,6 +136,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            hideEditorView();
             Intent intent = new Intent(this, SettingsActivity.class);
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
             ActivityCompat.startActivity(this, intent, options.toBundle());
@@ -137,6 +150,16 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        View add_view = findViewById(R.id.addPager);
+        if(add_view.getVisibility() == View.VISIBLE) {
+            hideEditorView();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
