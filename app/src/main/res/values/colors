@@ -10,6 +10,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#CFD8DC</color>
     <color name="mask_background">#18000000</color>
+    <color name="light_white">#5BFFFFFF</color>
 
     <color name="palette0">#F44336</color>
     <color name="dark_palette0">#B71C1C</color>

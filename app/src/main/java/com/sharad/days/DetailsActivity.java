@@ -65,8 +65,6 @@ public class DetailsActivity extends AppCompatActivity
         initToolbar();
         initViews();
         initViewPager();
-
-        EventNotification.notify(this, "This is my event notification", 2);
     }
 
     private void initToolbar() {

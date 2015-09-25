@@ -83,7 +83,7 @@ public class DataProvider {
         content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
         content.put(KEY_EVENT_COLOR    , event.get_colorId());
         content.put(KEY_EVENT_REPEAT   , event.get_repeat());
-        content.put(KEY_EVENT_FAVORITE , event.get_favorite());
+        content.put(KEY_EVENT_FAVORITE , event.get_favoriteIndex());
 
         // Insert it into the database.
         return db.insert(DATABASE_TABLE_EVENT, null, content);
@@ -98,7 +98,7 @@ public class DataProvider {
         content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
         content.put(KEY_EVENT_COLOR    , event.get_colorId());
         content.put(KEY_EVENT_REPEAT   , event.get_repeat());
-        content.put(KEY_EVENT_FAVORITE , event.get_favorite());
+        content.put(KEY_EVENT_FAVORITE , event.get_favoriteIndex());
 
         // Update it into the database.
         return db.update(DATABASE_TABLE_EVENT, content, where, null) != 0;

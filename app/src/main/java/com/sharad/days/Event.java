@@ -19,6 +19,7 @@ public class Event implements Comparable<Event>{
     public static final int REPEAT_YEARLY   = -1;
     public static final int REPEAT_MONTHLY  = -2;
     public static final int REPEAT_WEEKLY   = -3;
+    public static final int REPEAT_DAYS     = -4;
     public static final int REPEAT_NEVER    = 0;
 
     public static final int[] LabelArray = {

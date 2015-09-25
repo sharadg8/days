@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -61,10 +62,16 @@ public class EditorFragment extends Fragment {
     private FrameLayout     mMaskView;
     private int             mColorId;
     private int             mLabelId;
-    private int             mRepeatId;
+    private int             mRepeatType;
     DataProvider _db;
     private Date mDate;
     private long _eventId;
+
+    private TextView    mRepeatYearly;
+    private TextView    mRepeatMonthly;
+    private TextView    mRepeatWeekly;
+    private TextView    mRepeatDays;
+    private EditText    mRepeatDaysX;
 
     public final static int NEXT_CLOSE_EDITOR = 0;
     public final static int NEXT_ADDED_EDITOR = 1;
@@ -124,10 +131,7 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
-            Drawable rippleDrawable = ta.getDrawable(0);
-            ta.recycle();
-            mPalette.setBackground(rippleDrawable);
+            mPalette.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         mLabelId = 0;
@@ -140,15 +144,11 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
-            Drawable rippleDrawable = ta.getDrawable(0);
-            ta.recycle();
-            mFavorite.setBackground(rippleDrawable);
+            mFavorite.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         mRepeat = (ImageButton) rootView.findViewById(R.id.btn_repeat);
         mRepeatView = (LinearLayout) rootView.findViewById(R.id.repeat_days);
-        setRepeat(Event.REPEAT_NEVER);
         mRepeat.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
                 mRepeat.setSelected(!mRepeat.isSelected());
@@ -163,10 +163,7 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
-            Drawable rippleDrawable = ta.getDrawable(0);
-            ta.recycle();
-            mRepeat.setBackground(rippleDrawable);
+            mRepeat.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         mSave = (ImageButton) rootView.findViewById(R.id.btn_save);
@@ -174,20 +171,30 @@ public class EditorFragment extends Fragment {
             public void onClick(View button) {
                 String title = mTitleText.getText().toString();
                 if(title.equals("")) { title = "(No Title)"; }
+                int repeatId = Event.REPEAT_NEVER;
+                if(mRepeat.isSelected()) {
+                    if (mRepeatType == Event.REPEAT_DAYS) {
+                        if (mRepeatDaysX.getText().toString().length() > 0) {
+                            repeatId = Integer.valueOf(mRepeatDaysX.getText().toString());
+                        } else {
+                            repeatId = 0;
+                        }
+                    } else {
+                        repeatId = mRepeatType;
+                    }
+                }
                 if(_eventId != -1) {
-                    _db.updateEvent(new Event(_eventId, title, mDate, mColorId, mRepeatId, mLabelId));
+                    _db.updateEvent(new Event(_eventId, title, mDate, mColorId, repeatId, mLabelId));
                 } else {
-                    _db.insertEvent(new Event(0, title, mDate, mColorId, mRepeatId, mLabelId));
+                    long id = _db.insertEvent(new Event(0, title, mDate, mColorId, repeatId, mLabelId));
+                    EventNotification.notify(getActivity(), _db.getEvent(id));
                 }
                 showNextView(NEXT_ADDED_EDITOR);
             }
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
-            Drawable rippleDrawable = ta.getDrawable(0);
-            ta.recycle();
-            mSave.setBackground(rippleDrawable);
+            mSave.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         mCancel = (ImageButton) rootView.findViewById(R.id.btn_cancel);
@@ -198,10 +205,7 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
-            Drawable rippleDrawable = ta.getDrawable(0);
-            ta.recycle();
-            mCancel.setBackground(rippleDrawable);
+            mCancel.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         mTitleText = (EditText) rootView.findViewById(R.id.txt_title);
@@ -242,6 +246,58 @@ public class EditorFragment extends Fragment {
 
         setupColorPicker(rootView);
         setupLabelPicker(rootView);
+        setupRepeatPicker(rootView);
+    }
+
+    private void setupRepeatPicker(View rootView) {
+        mRepeatYearly = (TextView) rootView.findViewById(R.id.txt_repeat_yearly);
+        mRepeatYearly.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                setRepeatType(Event.REPEAT_YEARLY);
+            }
+        });
+
+        mRepeatMonthly = (TextView) rootView.findViewById(R.id.txt_repeat_monthly);
+        mRepeatMonthly.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                setRepeatType(Event.REPEAT_MONTHLY);
+            }
+        });
+
+        mRepeatWeekly = (TextView) rootView.findViewById(R.id.txt_repeat_weekly);
+        mRepeatWeekly.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                setRepeatType(Event.REPEAT_WEEKLY);
+            }
+        });
+
+        mRepeatDaysX = (EditText) rootView.findViewById(R.id.txt_repeat_days_num);
+        mRepeatDaysX.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                setRepeatType(Event.REPEAT_DAYS);
+            }
+        });
+        mRepeatDaysX.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (hasFocus) {
+                    imm.showSoftInput(mRepeatDaysX, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+                    imm.hideSoftInputFromWindow(mRepeatDaysX.getWindowToken(), 0);
+                }
+            }
+        });
+
+        mRepeatDays = (TextView) rootView.findViewById(R.id.txt_repeat_days);
+        mRepeatDays.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View button) {
+                setRepeatType(Event.REPEAT_DAYS);
+                mRepeatDaysX.requestFocus();
+            }
+        });
+
+        setRepeatType(Event.REPEAT_NEVER);
     }
 
     private Date getCurrentTime() {
@@ -249,11 +305,11 @@ public class EditorFragment extends Fragment {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int minute = cal.get(Calendar.MINUTE);
         switch (minute / 15) {
-            case 1:
+            case 0:
                 cal.set(Calendar.MINUTE, 0);
                 break;
+            case 1:
             case 2:
-            case 3:
                 cal.set(Calendar.MINUTE, 30);
                 break;
             default:
@@ -299,10 +355,7 @@ public class EditorFragment extends Fragment {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-            TypedArray ta = getActivity().obtainStyledAttributes(attrs);
-            Drawable rippleDrawable = ta.getDrawable(0);
-            ta.recycle();
-            ib.setBackground(rippleDrawable);
+            ib.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         ib.setColorFilter(getResources().getColor(R.color.primary_dark));
@@ -432,14 +485,14 @@ public class EditorFragment extends Fragment {
             _eventId = event.get_id();
             mTitleText.setText(event.get_title());
             mFavorite.setImageResource(event.get_favorite());
-            setRepeat(event.get_repeat());
+            setRepeatType(event.get_repeat());
             mDate = event.get_startDate();
             mColorId = event.get_colorId();
             mLabelId = event.get_favoriteIndex();
         } else {
             _eventId = -1;
             mTitleText.setText("");
-            setRepeat(Event.REPEAT_NEVER);
+            setRepeatType(Event.REPEAT_NEVER);
             mDate = getCurrentTime();
         }
         mDateText.setText(df.format(mDate));
@@ -448,8 +501,8 @@ public class EditorFragment extends Fragment {
         mMaskView.setBackgroundColor(mColorId);
     }
 
-    private void setRepeat(int repeat) {
-        mRepeatId = repeat;
+    private void setRepeatType(int repeat) {
+        mRepeatType = repeat;
         if(repeat == Event.REPEAT_NEVER) {
             mRepeatView.setVisibility(View.GONE);
             mRepeat.setSelected(false);
@@ -458,6 +511,41 @@ public class EditorFragment extends Fragment {
             mRepeatView.setVisibility(View.VISIBLE);
             mRepeat.setSelected(true);
             mRepeat.setAlpha(1.0f);
+        }
+        mRepeatYearly.setTextColor(getResources().getColor(R.color.light_white));
+        mRepeatMonthly.setTextColor(getResources().getColor(R.color.light_white));
+        mRepeatWeekly.setTextColor(getResources().getColor(R.color.light_white));
+        mRepeatDays.setTextColor(getResources().getColor(R.color.light_white));
+        mRepeatDaysX.setTextColor(getResources().getColor(R.color.light_white));
+        mRepeatDaysX.setHintTextColor(getResources().getColor(R.color.light_white));
+        switch (repeat) {
+            case Event.REPEAT_YEARLY:
+                mRepeatYearly.setTextColor(Color.WHITE);
+                mRepeatDaysX.clearFocus();
+                break;
+            case Event.REPEAT_MONTHLY:
+                mRepeatMonthly.setTextColor(Color.WHITE);
+                mRepeatDaysX.clearFocus();
+                break;
+            case Event.REPEAT_WEEKLY:
+                mRepeatWeekly.setTextColor(Color.WHITE);
+                mRepeatDaysX.clearFocus();
+                break;
+            case Event.REPEAT_DAYS:
+                mRepeatDays.setTextColor(Color.WHITE);
+                mRepeatDaysX.setTextColor(Color.WHITE);
+                mRepeatDaysX.setHintTextColor(Color.WHITE);
+                mRepeatDaysX.requestFocus();
+                break;
+            case Event.REPEAT_NEVER:
+                mRepeatDaysX.setText("");
+                break;
+            default:
+                mRepeatDaysX.setText(""+repeat);
+                mRepeatDays.setTextColor(Color.WHITE);
+                mRepeatDaysX.setTextColor(Color.WHITE);
+                mRepeatDaysX.setHintTextColor(Color.WHITE);
+                break;
         }
     }
 
