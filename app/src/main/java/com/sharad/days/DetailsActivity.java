@@ -3,6 +3,7 @@ package com.sharad.days;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -19,15 +20,19 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sharad.common.DatePickerFragment;
 import com.sharad.common.TimePickerFragment;
@@ -109,6 +114,44 @@ public class DetailsActivity extends AppCompatActivity
         _editor = EditorFragment.newInstance(0);
         editorPagerAdapter.addFragment(_editor, "Edit Event");
         editorViewPager.setAdapter(editorPagerAdapter);
+
+        final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
+        LinearLayout swipeView = (LinearLayout) this.findViewById(R.id.swipe_view);
+        swipeView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(final View view, final MotionEvent event) {
+                detector.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
+
+    class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        private static final int SWIPE_MIN_DISTANCE = 120;
+        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2,
+                               float velocityX, float velocityY) {
+            try {
+                if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE
+                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    findViewById(R.id.swipe_view).animate().scaleX(1.1f);
+                    findViewById(R.id.swipe_view).animate().scaleY(1.1f);
+                    Toast.makeText(getApplicationContext(), "Fling up",
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE
+                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    findViewById(R.id.swipe_view).clearAnimation();
+                    Toast.makeText(getApplicationContext(), "Fling down",
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
     }
 
     @Override
@@ -162,16 +205,6 @@ public class DetailsActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        View add_view = findViewById(R.id.editPager);
-        if(add_view.getVisibility() == View.VISIBLE) {
-            hideEditorView();
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override

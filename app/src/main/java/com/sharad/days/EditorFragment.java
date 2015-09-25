@@ -3,6 +3,7 @@ package com.sharad.days;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -10,8 +11,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -44,7 +47,7 @@ public class EditorFragment extends Fragment {
     private static final String ARG_COLOR_ID = "color_id";
 
     private ImageButton mFavorite;
-    private ImageButton mNotification;
+    private ImageButton mRepeat;
     private ImageButton mPalette;
     private ImageButton mSave;
     private ImageButton mCancel;
@@ -53,11 +56,12 @@ public class EditorFragment extends Fragment {
     private TextView    mTimeText;
     private RelativeLayout  mColorPicker;
     private RelativeLayout  mLabelPicker;
-    private LinearLayout    mEditorView;
+    private RelativeLayout  mEditorView;
+    private LinearLayout    mRepeatView;
     private FrameLayout     mMaskView;
     private int             mColorId;
     private int             mLabelId;
-    private int             mNotifyId;
+    private int             mRepeatId;
     DataProvider _db;
     private Date mDate;
     private long _eventId;
@@ -142,23 +146,27 @@ public class EditorFragment extends Fragment {
             mFavorite.setBackground(rippleDrawable);
         }
 
-        mNotifyId = 0;
-        mNotification = (ImageButton) rootView.findViewById(R.id.btn_notification);
-        mNotification.setSelected(true);
-        mNotification.setOnClickListener(new View.OnClickListener() {
+        mRepeat = (ImageButton) rootView.findViewById(R.id.btn_repeat);
+        mRepeatView = (LinearLayout) rootView.findViewById(R.id.repeat_days);
+        setRepeat(Event.REPEAT_NEVER);
+        mRepeat.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
-                mNotification.setSelected(!mNotification.isSelected());
-                float alpha = mNotification.isSelected() ? 1.0f : 0.3f;
-                mNotification.setAlpha(alpha);
+                mRepeat.setSelected(!mRepeat.isSelected());
+                float alpha = mRepeat.isSelected() ? 1.0f : 0.3f;
+                mRepeat.setAlpha(alpha);
+                if(mRepeat.isSelected()) {
+                    mRepeatView.setVisibility(View.VISIBLE);
+                } else {
+                    mRepeatView.setVisibility(View.GONE);
+                }
             }
         });
-        mNotification.setVisibility(View.GONE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
             TypedArray ta = getActivity().obtainStyledAttributes(attrs);
             Drawable rippleDrawable = ta.getDrawable(0);
             ta.recycle();
-            mNotification.setBackground(rippleDrawable);
+            mRepeat.setBackground(rippleDrawable);
         }
 
         mSave = (ImageButton) rootView.findViewById(R.id.btn_save);
@@ -167,9 +175,9 @@ public class EditorFragment extends Fragment {
                 String title = mTitleText.getText().toString();
                 if(title.equals("")) { title = "(No Title)"; }
                 if(_eventId != -1) {
-                    _db.updateEvent(new Event(_eventId, title, mDate, mColorId, mNotifyId, mLabelId));
+                    _db.updateEvent(new Event(_eventId, title, mDate, mColorId, mRepeatId, mLabelId));
                 } else {
-                    _db.insertEvent(new Event(0, title, mDate, mColorId, mNotifyId, mLabelId));
+                    _db.insertEvent(new Event(0, title, mDate, mColorId, mRepeatId, mLabelId));
                 }
                 showNextView(NEXT_ADDED_EDITOR);
             }
@@ -199,32 +207,14 @@ public class EditorFragment extends Fragment {
         mTitleText = (EditText) rootView.findViewById(R.id.txt_title);
 
         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy");
-        Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minute = cal.get(Calendar.MINUTE);
-        switch (minute / 15) {
-            case 1:
-                cal.set(Calendar.HOUR_OF_DAY, hour);
-                cal.set(Calendar.HOUR_OF_DAY, hour);
-                cal.set(Calendar.MINUTE, 0);
-                break;
-            case 2:
-            case 3:
-                cal.set(Calendar.HOUR_OF_DAY, hour);
-                cal.set(Calendar.MINUTE, 30);
-                break;
-            default:
-                cal.set(Calendar.HOUR_OF_DAY, hour+1);
-                cal.set(Calendar.MINUTE, 0);
-                break;
-        }
-        mDate = cal.getTime();
+        mDate = getCurrentTime();
         mDateText = (TextView) rootView.findViewById(R.id.txt_date);
         mDateText.setText(df.format(mDate));
         mDateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setTime(mDate);
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
@@ -241,7 +231,7 @@ public class EditorFragment extends Fragment {
             }
         });
 
-        mEditorView = (LinearLayout) rootView.findViewById(R.id.view_add_new);
+        mEditorView = (RelativeLayout) rootView.findViewById(R.id.view_add_new);
         mEditorView.setVisibility(View.VISIBLE);
         mColorId = getResources().getColor(R.color.palette5);
         mEditorView.setBackgroundColor(mColorId);
@@ -252,6 +242,26 @@ public class EditorFragment extends Fragment {
 
         setupColorPicker(rootView);
         setupLabelPicker(rootView);
+    }
+
+    private Date getCurrentTime() {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        switch (minute / 15) {
+            case 1:
+                cal.set(Calendar.MINUTE, 0);
+                break;
+            case 2:
+            case 3:
+                cal.set(Calendar.MINUTE, 30);
+                break;
+            default:
+                cal.set(Calendar.HOUR_OF_DAY, hour+1);
+                cal.set(Calendar.MINUTE, 0);
+                break;
+        }
+        return cal.getTime();
     }
 
     private void setupLabelPicker(View rootView) {
@@ -422,24 +432,33 @@ public class EditorFragment extends Fragment {
             _eventId = event.get_id();
             mTitleText.setText(event.get_title());
             mFavorite.setImageResource(event.get_favorite());
-            //mNotification.setSelected(event.is_notify());
+            setRepeat(event.get_repeat());
             mDate = event.get_startDate();
             mColorId = event.get_colorId();
-            mNotifyId = event.get_notify();
             mLabelId = event.get_favoriteIndex();
         } else {
             _eventId = -1;
             mTitleText.setText("");
-            mNotification.setSelected(true);
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.HOUR_OF_DAY, 9);
-            c.set(Calendar.MINUTE, 0);
-            mDate = c.getTime();
+            setRepeat(Event.REPEAT_NEVER);
+            mDate = getCurrentTime();
         }
         mDateText.setText(df.format(mDate));
         mTimeText.setText(tf.format(mDate));
         mEditorView.setBackgroundColor(mColorId);
         mMaskView.setBackgroundColor(mColorId);
+    }
+
+    private void setRepeat(int repeat) {
+        mRepeatId = repeat;
+        if(repeat == Event.REPEAT_NEVER) {
+            mRepeatView.setVisibility(View.GONE);
+            mRepeat.setSelected(false);
+            mRepeat.setAlpha(0.3f);
+        } else {
+            mRepeatView.setVisibility(View.VISIBLE);
+            mRepeat.setSelected(true);
+            mRepeat.setAlpha(1.0f);
+        }
     }
 
     @Override

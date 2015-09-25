@@ -12,9 +12,14 @@ public class Event implements Comparable<Event>{
     private long   _id;
 	private Date   _startDate;
     private String _title;
-    private int    _notify, _favorite, _favoriteIndex;
+    private int    _repeat, _favorite, _favoriteIndex;
     private int    _colorId;
     private int    _dayCount, _agoTogo;
+
+    public static final int REPEAT_YEARLY   = -1;
+    public static final int REPEAT_MONTHLY  = -2;
+    public static final int REPEAT_WEEKLY   = -3;
+    public static final int REPEAT_NEVER    = 0;
 
     public static final int[] LabelArray = {
             R.drawable.ic_favorite_black_24dp,
@@ -37,13 +42,13 @@ public class Event implements Comparable<Event>{
             R.drawable.ic_call_black_24dp,
     };
 
-    Event(long id, String title, Date stDate, int colId, int notify, int favorite) {
+    Event(long id, String title, Date stDate, int colId, int repeat, int favorite) {
         _id = id;
         _title = title;
         _startDate = stDate;
         _colorId = colId;
-        _notify = notify;
-        _favoriteIndex = _favorite;
+        _repeat = repeat;
+        _favoriteIndex = favorite;
         _favorite = favorite;
         if(favorite >= 0 && favorite < LabelArray.length) {
             _favorite = LabelArray[favorite];
@@ -73,7 +78,7 @@ public class Event implements Comparable<Event>{
     public String get_title() {        return _title;         }
     public int get_favorite() {        return _favorite;      }
     public int get_favoriteIndex() {   return _favoriteIndex; }
-    public int get_notify() {          return _notify;        }
+    public int get_repeat() {          return _repeat;        }
     public int get_colorId() {         return _colorId;       }
     public int get_dayCount() {        return _dayCount;      }
     public int get_agoTogo() {         return _agoTogo;       }

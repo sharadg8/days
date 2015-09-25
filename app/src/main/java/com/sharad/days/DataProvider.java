@@ -24,12 +24,12 @@ public class DataProvider {
     public static final String KEY_EVENT_TITLE      = "title";
     public static final String KEY_EVENT_DATE       = "date";
     public static final String KEY_EVENT_COLOR      = "color";
-    public static final String KEY_EVENT_NOTIFY     = "notify";
+    public static final String KEY_EVENT_REPEAT     = "notify";
     public static final String KEY_EVENT_FAVORITE   = "favorite";
 
 
     public static final String[] ALL_KEYS_EVENT = new String[] {KEY_EVENT_ROWID, KEY_EVENT_TITLE,
-			KEY_EVENT_DATE, KEY_EVENT_COLOR, KEY_EVENT_NOTIFY, KEY_EVENT_FAVORITE };
+			KEY_EVENT_DATE, KEY_EVENT_COLOR, KEY_EVENT_REPEAT, KEY_EVENT_FAVORITE };
 
     public static final String DATABASE_NAME = "savings";
     public static final String DATABASE_TABLE_EVENT = "event_table";
@@ -40,7 +40,7 @@ public class DataProvider {
             + KEY_EVENT_TITLE     + " text not null, "
             + KEY_EVENT_DATE      + " integer not null, "
             + KEY_EVENT_COLOR     + " integer not null, "
-            + KEY_EVENT_NOTIFY    + " integer not null, "
+            + KEY_EVENT_REPEAT    + " integer not null, "
             + KEY_EVENT_FAVORITE  + " integer not null"
             + ");";
 
@@ -82,7 +82,7 @@ public class DataProvider {
         content.put(KEY_EVENT_TITLE    , event.get_title());
         content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
         content.put(KEY_EVENT_COLOR    , event.get_colorId());
-        content.put(KEY_EVENT_NOTIFY   , event.get_notify());
+        content.put(KEY_EVENT_REPEAT   , event.get_repeat());
         content.put(KEY_EVENT_FAVORITE , event.get_favorite());
 
         // Insert it into the database.
@@ -97,7 +97,7 @@ public class DataProvider {
         content.put(KEY_EVENT_TITLE    , event.get_title());
         content.put(KEY_EVENT_DATE     , event.get_startDate().getTime());
         content.put(KEY_EVENT_COLOR    , event.get_colorId());
-        content.put(KEY_EVENT_NOTIFY   , event.get_notify());
+        content.put(KEY_EVENT_REPEAT   , event.get_repeat());
         content.put(KEY_EVENT_FAVORITE , event.get_favorite());
 
         // Update it into the database.
@@ -119,7 +119,7 @@ public class DataProvider {
         String title 	 = c.getString(c.getColumnIndex(KEY_EVENT_TITLE));
         Date stDate		 = new Date(c.getLong(c.getColumnIndex(KEY_EVENT_DATE)));
         int colorId	     = (int)c.getLong(c.getColumnIndex(KEY_EVENT_COLOR));
-        int notify       = (int)c.getLong(c.getColumnIndex(KEY_EVENT_NOTIFY));
+        int notify       = (int)c.getLong(c.getColumnIndex(KEY_EVENT_REPEAT));
         int favorite     = (int)c.getLong(c.getColumnIndex(KEY_EVENT_FAVORITE));
 
         Event event = new Event(id, title, stDate, colorId, notify, favorite);
