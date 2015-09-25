@@ -67,7 +67,7 @@
                 android:layout_height="1px"
                 android:layout_alignParentBottom="true"
                 android:background="@color/divider"
-                android:alpha="75"/>
+                android:alpha="25"/>
         </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
