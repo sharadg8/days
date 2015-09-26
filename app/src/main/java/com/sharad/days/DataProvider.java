@@ -123,6 +123,10 @@ public class DataProvider {
         int favorite     = (int)c.getLong(c.getColumnIndex(KEY_EVENT_FAVORITE));
 
         Event event = new Event(id, title, stDate, colorId, notify, favorite);
+        // update new values in db
+        if(event.checkAndClearUpdated()) {
+            updateEvent(event);
+        }
         return event;
 	}
 	

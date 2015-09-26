@@ -15,6 +15,7 @@ public class Event implements Comparable<Event>{
     private int    _repeat, _favorite, _favoriteIndex;
     private int    _colorId;
     private int    _dayCount, _agoTogo;
+    private boolean _updated;
 
     public static final int REPEAT_YEARLY   = -1;
     public static final int REPEAT_MONTHLY  = -2;
@@ -44,6 +45,7 @@ public class Event implements Comparable<Event>{
     };
 
     Event(long id, String title, Date stDate, int colId, int repeat, int favorite) {
+        _updated = false;
         _id = id;
         _title = title;
         _startDate = stDate;
@@ -53,6 +55,40 @@ public class Event implements Comparable<Event>{
         _favorite = favorite;
         if(favorite >= 0 && favorite < LabelArray.length) {
             _favorite = LabelArray[favorite];
+        }
+
+        Date date = _startDate;
+        if(repeat != REPEAT_NEVER) {
+            while((System.currentTimeMillis() - _startDate.getTime()) < 0) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(_startDate);
+                if(repeat == REPEAT_YEARLY) {
+                    c.add(Calendar.YEAR, -1);
+                } else if(repeat == REPEAT_MONTHLY) {
+                    c.add(Calendar.MONTH, -1);
+                } else if(repeat == REPEAT_WEEKLY) {
+                    c.add(Calendar.DATE, -7);
+                } else {
+                    c.add(Calendar.DATE, -repeat);
+                }
+                _startDate = c.getTime();
+            }
+            while((System.currentTimeMillis() - _startDate.getTime()) > 0) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(_startDate);
+                if(repeat == REPEAT_YEARLY) {
+                    c.add(Calendar.YEAR, 1);
+                } else if(repeat == REPEAT_MONTHLY) {
+                    c.add(Calendar.MONTH, 1);
+                } else if(repeat == REPEAT_WEEKLY) {
+                    c.add(Calendar.DATE, 7);
+                } else {
+                    c.add(Calendar.DATE, repeat);
+                }
+                _startDate = c.getTime();
+            }
+
+            _updated |= (date.getTime() != _startDate.getTime());
         }
 
         long diff = System.currentTimeMillis() - _startDate.getTime();
@@ -84,6 +120,12 @@ public class Event implements Comparable<Event>{
     public int get_dayCount() {        return _dayCount;      }
     public int get_agoTogo() {         return _agoTogo;       }
 
+    public boolean checkAndClearUpdated() {
+        boolean updated = _updated;
+        _updated = false;
+        return updated;
+    }
+
     public String get_dateText() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(_startDate);
@@ -93,7 +135,19 @@ public class Event implements Comparable<Event>{
         } else {
             df = new SimpleDateFormat("MMMM dd, yyyy");
         }
-        return df.format(cal.getTime());
+        String txt;
+        if(_repeat == REPEAT_YEARLY) {
+            txt = " [Y]";
+        } else if(_repeat == REPEAT_MONTHLY) {
+            txt = " [M]";
+        } else if(_repeat == REPEAT_WEEKLY) {
+            txt = " [W]";
+        } else if(_repeat == REPEAT_NEVER) {
+            txt = "";
+        } else {
+            txt = " ["+_repeat+" D]";
+        }
+        return df.format(cal.getTime()) + txt;
     }
 
     @Override
