@@ -3,6 +3,8 @@
     package="com.sharad.days" >
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +28,23 @@
             android:name=".DetailsActivity"
             android:label="@string/title_activity_detail" >
         </activity>
+
+        <receiver android:name="com.sharad.reminder.OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.sharad.reminder.OnAlarmReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
+
+        <service
+            android:name="com.sharad.reminder.ReminderIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

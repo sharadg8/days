@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -23,11 +25,13 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.sharad.common.DatePickerFragment;
 import com.sharad.common.TimePickerFragment;
+import com.sharad.reminder.ReminderManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.prefs.PreferencesFactory;
 
 
 public class MainActivity extends AppCompatActivity
@@ -38,8 +42,6 @@ public class MainActivity extends AppCompatActivity
     private EventsFragment _eventList;
     private EditorFragment      _editor;
 
-    ViewPager _editorViewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,27 @@ public class MainActivity extends AppCompatActivity
 
         initToolbar();
         initViewPager();
+
+        runOnce();
+    }
+
+    private void runOnce() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        if(prefs.getBoolean("isInitialAppLaunch", true)) {
+            editor.putBoolean("isInitialAppLaunch", false);
+            ReminderManager reminderMgr = new ReminderManager(this);
+            DataProvider db = new DataProvider(this);
+            db.open();
+            ArrayList<Event> events = new ArrayList<>();
+            db.getEvents(events, DataProvider.KEY_EVENT_DATE + ">" + System.currentTimeMillis());
+            for(int i = 0; i<events.size(); i++) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(events.get(i).get_startDate());
+                reminderMgr.setReminder(events.get(i).get_id(), c);
+            }
+            db.close();
+        }
     }
 
     private void initToolbar() {

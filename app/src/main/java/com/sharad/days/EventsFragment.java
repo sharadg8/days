@@ -109,10 +109,9 @@ public class EventsFragment extends Fragment {
 
     private void updateItemList() {
         if(_db != null) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
-            String strOrder = sp.getString("sort_order", "0");
-
-            boolean elapsed = sp.getBoolean("show_elapsed", true);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+            String strOrder = prefs.getString("sort_order", "0");
+            boolean elapsed = prefs.getBoolean("show_elapsed", true);
             if(!elapsed) {
                 _where = DataProvider.KEY_EVENT_DATE + " > " + System.currentTimeMillis();
             } else {

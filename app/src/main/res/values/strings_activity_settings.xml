@@ -49,24 +49,6 @@
     <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_enable_notifications">Enable Notifications</string>
-    <string name="pref_title_notification_before">Day</string>
-    <string-array name="pref_notification_before_titles">
-        <item>On day</item>
-        <item>1 Day before</item>
-        <item>2 Day before</item>
-        <item>5 Day before</item>
-        <item>1 Week before</item>
-        <item>1 Month before</item>
-    </string-array>
-    <string-array name="pref_notification_before_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-    <string name="pref_title_notification_time">Time</string>
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 

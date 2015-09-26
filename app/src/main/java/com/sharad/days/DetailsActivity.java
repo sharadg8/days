@@ -115,17 +115,17 @@ public class DetailsActivity extends AppCompatActivity
         editorPagerAdapter.addFragment(_editor, "Edit Event");
         editorViewPager.setAdapter(editorPagerAdapter);
 
-        final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
+        //final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
         LinearLayout swipeView = (LinearLayout) this.findViewById(R.id.swipe_view);
         swipeView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent event) {
-                detector.onTouchEvent(event);
+                //detector.onTouchEvent(event);
                 return true;
             }
         });
     }
-
+/*
     class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_MIN_DISTANCE = 120;
         private static final int SWIPE_THRESHOLD_VELOCITY = 200;
@@ -153,7 +153,7 @@ public class DetailsActivity extends AppCompatActivity
             return false;
         }
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

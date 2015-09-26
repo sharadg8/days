@@ -4,17 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -29,6 +25,8 @@ import android.widget.TextView;
 import com.sharad.common.CircleButton;
 import com.sharad.common.DatePickerFragment;
 import com.sharad.common.TimePickerFragment;
+import com.sharad.reminder.EventNotification;
+import com.sharad.reminder.ReminderManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -183,13 +181,18 @@ public class EditorFragment extends Fragment {
                         repeatId = mRepeatType;
                     }
                 }
+                long eventId;
                 if(_eventId != -1) {
+                    eventId = _eventId;
                     _db.updateEvent(new Event(_eventId, title, mDate, mColorId, repeatId, mLabelId));
                 } else {
-                    long id = _db.insertEvent(new Event(0, title, mDate, mColorId, repeatId, mLabelId));
-                    EventNotification.notify(getActivity(), _db.getEvent(id));
+                    eventId = _db.insertEvent(new Event(0, title, mDate, mColorId, repeatId, mLabelId));
+                    //EventNotification.notify(getActivity(), _db.getEvent(eventId));
                 }
                 showNextView(NEXT_ADDED_EDITOR);
+                Calendar c = Calendar.getInstance();
+                c.setTime(mDate);
+                new ReminderManager(getActivity()).setReminder(eventId, c);
             }
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -283,6 +286,7 @@ public class EditorFragment extends Fragment {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (hasFocus) {
                     imm.showSoftInput(mRepeatDaysX, InputMethodManager.SHOW_IMPLICIT);
+                    setRepeatType(Event.REPEAT_DAYS);
                 } else {
                     imm.hideSoftInputFromWindow(mRepeatDaysX.getWindowToken(), 0);
                 }
