@@ -3,6 +3,7 @@ package com.sharad.days;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -15,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor editor = prefs.edit();
         if(prefs.getBoolean("isInitialAppLaunch", true)) {
             editor.putBoolean("isInitialAppLaunch", false);
+            editor.commit();
             ReminderManager reminderMgr = new ReminderManager(this);
             DataProvider db = new DataProvider(this);
             db.open();
@@ -69,6 +72,18 @@ public class MainActivity extends AppCompatActivity
                 reminderMgr.setReminder(events.get(i).get_id(), c);
             }
             db.close();
+
+            new AlertDialog.Builder(this)
+                    .setTitle("What's new")
+                    .setMessage("Version 1.3\n"
+                            +"1. Repeating events\n"
+                            +"2. Event notifications\n"
+                            +"3. Minor UI updates\n"
+                            +"4. Minor bug fixes")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) { }
+                    })
+                    .show();
         }
     }
 

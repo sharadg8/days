@@ -24,7 +24,7 @@ public class ReminderManager {
         Intent intent = new Intent(mContext, OnAlarmReceiver.class);
 		intent.putExtra(DataProvider.KEY_EVENT_ROWID, eventId);
 
-        PendingIntent pi = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pi = PendingIntent.getBroadcast(mContext, (int)eventId, intent, PendingIntent.FLAG_ONE_SHOT);
         
         mAlarmManager.set(AlarmManager.RTC_WAKEUP, when.getTimeInMillis(), pi);
 	}
