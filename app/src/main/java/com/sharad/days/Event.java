@@ -44,6 +44,27 @@ public class Event implements Comparable<Event>{
             R.drawable.ic_call_black_24dp,
     };
 
+    public static final int[] LabelArrayLarge = {
+            R.drawable.ic_favorite_black_48dp,
+            R.drawable.ic_cake_black_48dp,
+            R.drawable.ic_star_black_48dp,
+            R.drawable.ic_directions_bus_black_48dp,
+            R.drawable.ic_school_black_48dp,
+            R.drawable.ic_timer_black_48dp,
+            R.drawable.ic_home_black_48dp,
+            R.drawable.ic_shopping_cart_black_48dp,
+            R.drawable.ic_redeem_black_48dp,
+            R.drawable.ic_work_black_48dp,
+            R.drawable.ic_flight_takeoff_black_48dp,
+            R.drawable.ic_attach_money_black_48dp,
+            R.drawable.ic_thumb_up_black_48dp,
+            R.drawable.ic_thumb_down_black_48dp,
+            R.drawable.ic_movie_black_48dp,
+            R.drawable.ic_insert_emoticon_black_48dp,
+            R.drawable.ic_style_black_48dp,
+            R.drawable.ic_call_black_48dp,
+    };
+
     Event(long id, String title, Date stDate, int colId, int repeat, int favorite) {
         _updated = false;
         _id = id;
@@ -106,6 +127,12 @@ public class Event implements Comparable<Event>{
             }
         }
         return id;
+    }
+
+    public int getLabelLarge() {
+        int index = 0;
+        if(_favoriteIndex < LabelArrayLarge.length) { index = _favoriteIndex; }
+        return LabelArrayLarge[index];
     }
 
 	public void set_id(long id) {             _id = id;       }

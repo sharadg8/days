@@ -104,7 +104,7 @@ public class DetailsActivity extends AppCompatActivity
         days.setText("" + _event.get_dayCount());
         date.setText(_event.get_dateText());
         title.setText(_event.get_title());
-        label.setImageResource(_event.get_favorite());
+        label.setImageResource(_event.getLabelLarge());
         agoTogo.setImageResource(_event.get_agoTogo());
     }
 

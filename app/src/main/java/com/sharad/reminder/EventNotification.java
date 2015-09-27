@@ -12,8 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -117,7 +115,12 @@ public class EventNotification {
                                             .putExtra(DetailsActivity.ID_KEY, event.get_id()),
                                     PendingIntent.FLAG_UPDATE_CURRENT))
                     .setAutoCancel(true);
-            notify(context, builder.build());
+            //notify(context, builder.build());
+
+            NotificationManager notificationMgr = (NotificationManager) context
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationMgr.notify((int) event.get_id(), builder.build());
         }
     }
 
@@ -152,7 +155,6 @@ public class EventNotification {
 
     /**
      * Cancels any notifications of this type previously shown using
-     * {@link #notify(Context, String, int)}.
      */
     @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void cancel(final Context context) {
