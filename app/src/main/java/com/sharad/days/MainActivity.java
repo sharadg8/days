@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,8 +59,15 @@ public class MainActivity extends AppCompatActivity
     private void runOnce() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
-        if(prefs.getBoolean("isInitialAppLaunch", true)) {
-            editor.putBoolean("isInitialAppLaunch", false);
+        String version = "";
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String currentVer = prefs.getString("appVersion", "0");
+        if(!currentVer.equals(version)) {
+            editor.putString("appVersion", version);
             editor.commit();
             ReminderManager reminderMgr = new ReminderManager(this);
             DataProvider db = new DataProvider(this);
@@ -75,13 +83,17 @@ public class MainActivity extends AppCompatActivity
 
             new AlertDialog.Builder(this)
                     .setTitle("What's new")
-                    .setMessage("Version 1.3\n"
+                    .setMessage("Version "+version+"\n"
                             +"1. Repeating events\n"
                             +"2. Event notifications\n"
                             +"3. Minor UI updates\n"
-                            +"4. Minor bug fixes")
+                            +"4. Minor bug fixes\n\n"
+                            +"Do not worry if the color and icons are changed for existing events!! - Bug fixed\n\n"
+                            +"Thanks for using app\n"
+                            +"Happy counting days!!")
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) { }
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
                     })
                     .show();
         }
