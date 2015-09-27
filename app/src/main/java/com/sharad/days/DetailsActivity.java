@@ -28,6 +28,10 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +41,7 @@ import android.widget.Toast;
 import com.sharad.common.DatePickerFragment;
 import com.sharad.common.TimePickerFragment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,16 +101,78 @@ public class DetailsActivity extends AppCompatActivity
 
     private void initViews() {
         TextView days = (TextView) findViewById(R.id.d_days);
-        TextView date = (TextView) findViewById(R.id.d_date);
+        final TextView date = (TextView) findViewById(R.id.d_date);
+        final TextView time = (TextView) findViewById(R.id.d_time);
         TextView title = (TextView) findViewById(R.id.d_title);
-        ImageView label = (ImageView) findViewById(R.id.d_label);
+        final ImageView label = (ImageView) findViewById(R.id.d_label);
+        final ImageView labelLarge = (ImageView) findViewById(R.id.d_label_big);
         ImageView agoTogo = (ImageView) findViewById(R.id.d_ago_togo);
 
         days.setText("" + _event.get_dayCount());
         date.setText(_event.get_dateText());
         title.setText(_event.get_title());
-        label.setImageResource(_event.getLabelLarge());
+        label.setImageResource(_event.get_favorite());
+        labelLarge.setImageResource(_event.getLabelLarge());
         agoTogo.setImageResource(_event.get_agoTogo());
+        SimpleDateFormat tf = new SimpleDateFormat("hh:mm aa");
+        time.setText(tf.format(_event.get_startDate()));
+
+        date.setVisibility(View.INVISIBLE);
+        time.setVisibility(View.INVISIBLE);
+        labelLarge.setVisibility(View.INVISIBLE);
+        labelLarge.clearAnimation();
+        label.setVisibility(View.VISIBLE);
+
+        ScaleAnimation labelAnim = new ScaleAnimation(1f, 0.8f, 1f, 0.8f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        labelAnim.setDuration(500);
+        labelAnim.setRepeatCount(10);
+        labelAnim.setRepeatMode(Animation.REVERSE);
+        label.startAnimation(labelAnim);
+
+        final ScaleAnimation labelScale = new ScaleAnimation(0f, 1f, 0f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        labelScale.setDuration(800);
+        labelScale.setFillAfter(true);
+
+        labelAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                label.setVisibility(View.GONE);
+                labelLarge.setVisibility(View.VISIBLE);
+                labelLarge.startAnimation(labelScale);
+            }
+        });
+
+        labelScale.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                labelLarge.setVisibility(View.VISIBLE);
+                date.setVisibility(View.VISIBLE);
+                time.setVisibility(View.VISIBLE);
+                ScaleAnimation labelAnim = new ScaleAnimation(1f, 0.85f, 1f, 0.85f,
+                        Animation.RELATIVE_TO_SELF, 0.5f,
+                        Animation.RELATIVE_TO_SELF, 0.5f);
+                labelAnim.setDuration(500);
+                labelAnim.setRepeatCount(Animation.INFINITE);
+                labelAnim.setRepeatMode(Animation.REVERSE);
+                labelLarge.startAnimation(labelAnim);
+            }
+        });
     }
 
     private void initViewPager() {
@@ -114,46 +181,8 @@ public class DetailsActivity extends AppCompatActivity
         _editor = EditorFragment.newInstance(0);
         editorPagerAdapter.addFragment(_editor, "Edit Event");
         editorViewPager.setAdapter(editorPagerAdapter);
+    }
 
-        //final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
-        LinearLayout swipeView = (LinearLayout) this.findViewById(R.id.swipe_view);
-        swipeView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(final View view, final MotionEvent event) {
-                //detector.onTouchEvent(event);
-                return true;
-            }
-        });
-    }
-/*
-    class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
-        private static final int SWIPE_MIN_DISTANCE = 120;
-        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2,
-                               float velocityX, float velocityY) {
-            try {
-                if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE
-                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    findViewById(R.id.swipe_view).animate().scaleX(1.1f);
-                    findViewById(R.id.swipe_view).animate().scaleY(1.1f);
-                    Toast.makeText(getApplicationContext(), "Fling up",
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE
-                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    findViewById(R.id.swipe_view).clearAnimation();
-                    Toast.makeText(getApplicationContext(), "Fling down",
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-    }
-*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -51,39 +51,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
-                <View
-                    android:layout_width="40dp"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@android:color/white"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/d_label"
-                    android:paddingLeft="8dp"
                     android:paddingRight="8dp"
+                    android:layout_gravity="center_vertical"
                     android:tint="@android:color/white"
                     android:src="@drawable/ic_favorite_black_24dp"/>
-                <View
-                    android:layout_width="40dp"
-                    android:layout_height="2dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/d_title"
                     android:layout_gravity="center_vertical"
-                    android:background="@android:color/white"/>
+                    android:textColor="@android:color/white"
+                    android:text="Something Special"
+                    android:textSize="20sp"/>
             </LinearLayout>
-            <TextView
+
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/d_title"
-                android:textColor="@android:color/white"
-                android:text="Something Special"
-                android:textSize="20sp"/>
+                android:id="@+id/d_label_big"
+                android:paddingTop="36dp"
+                android:tint="@android:color/white"
+                android:src="@drawable/ic_favorite_black_48dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/d_date"
                 android:textColor="@android:color/white"
                 android:text="March 31, 2015"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/d_time"
+                android:textColor="@android:color/white"
+                android:text="09:00 AM"
                 android:textSize="18sp"/>
         </LinearLayout>
     </RelativeLayout>
