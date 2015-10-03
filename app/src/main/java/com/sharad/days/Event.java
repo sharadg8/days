@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class Event implements Comparable<Event>{
     private long   _id;
-	private Date   _startDate;
+	private Calendar   _startDate;
     private String _title;
     private int    _repeat, _favorite, _favoriteIndex;
     private int    _colorId;
@@ -69,7 +69,8 @@ public class Event implements Comparable<Event>{
         _updated = false;
         _id = id;
         _title = title;
-        _startDate = stDate;
+        _startDate = Calendar.getInstance();
+        _startDate.setTime(stDate);
         _colorId = colId;
         _repeat = repeat;
         _favoriteIndex = favorite;
@@ -78,41 +79,36 @@ public class Event implements Comparable<Event>{
             _favorite = LabelArray[favorite];
         }
 
-        Date date = _startDate;
+        Calendar date = _startDate;
         if(repeat != REPEAT_NEVER) {
-            while((System.currentTimeMillis() - _startDate.getTime()) < 0) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(_startDate);
+            while((System.currentTimeMillis() - _startDate.getTimeInMillis()) < 0) {
+                Calendar c = _startDate;
                 if(repeat == REPEAT_YEARLY) {
-                    c.add(Calendar.YEAR, -1);
+                    _startDate.add(Calendar.YEAR, -1);
                 } else if(repeat == REPEAT_MONTHLY) {
-                    c.add(Calendar.MONTH, -1);
+                    _startDate.add(Calendar.MONTH, -1);
                 } else if(repeat == REPEAT_WEEKLY) {
-                    c.add(Calendar.DATE, -7);
+                    _startDate.add(Calendar.DATE, -7);
                 } else {
-                    c.add(Calendar.DATE, -repeat);
+                    _startDate.add(Calendar.DATE, -repeat);
                 }
-                _startDate = c.getTime();
             }
-            while((System.currentTimeMillis() - _startDate.getTime()) > 0) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(_startDate);
+            while((System.currentTimeMillis() - _startDate.getTimeInMillis()) > 0) {
                 if(repeat == REPEAT_YEARLY) {
-                    c.add(Calendar.YEAR, 1);
+                    _startDate.add(Calendar.YEAR, 1);
                 } else if(repeat == REPEAT_MONTHLY) {
-                    c.add(Calendar.MONTH, 1);
+                    _startDate.add(Calendar.MONTH, 1);
                 } else if(repeat == REPEAT_WEEKLY) {
-                    c.add(Calendar.DATE, 7);
+                    _startDate.add(Calendar.DATE, 7);
                 } else {
-                    c.add(Calendar.DATE, repeat);
+                    _startDate.add(Calendar.DATE, repeat);
                 }
-                _startDate = c.getTime();
             }
 
             _updated |= (date.getTime() != _startDate.getTime());
         }
 
-        long diff = System.currentTimeMillis() - _startDate.getTime();
+        long diff = System.currentTimeMillis() - _startDate.getTimeInMillis();
         float days = (float) diff / (24 * 60 * 60 * 1000);
         _dayCount = (int) Math.abs(days);
         _agoTogo = (diff > 0) ? R.drawable.ic_previous_black_24dp : R.drawable.ic_next_black_24dp;
@@ -138,7 +134,7 @@ public class Event implements Comparable<Event>{
 	public void set_id(long id) {             _id = id;       }
     public long get_id() {             return _id;            }
 
-    public Date get_startDate() {      return _startDate;     }
+    public Date get_startDate() {      return _startDate.getTime();     }
     public String get_title() {        return _title;         }
     public int get_favorite() {        return _favorite;      }
     public int get_favoriteIndex() {   return _favoriteIndex; }
@@ -147,6 +143,42 @@ public class Event implements Comparable<Event>{
     public int get_dayCount() {        return _dayCount;      }
     public int get_agoTogo() {         return _agoTogo;       }
 
+    public int[] get_diffInDates() {
+        int years=0,months=0,days=0,hours=0,mins=0;
+
+        Calendar now = Calendar.getInstance();
+
+        if(now.before(_startDate)) {
+            years = _startDate.get(Calendar.YEAR) - now.get(Calendar.YEAR);
+            months = _startDate.get(Calendar.MONTH) - now.get(Calendar.MONTH);
+            days = _startDate.get(Calendar.DATE) - now.get(Calendar.DATE);
+            hours = _startDate.get(Calendar.HOUR_OF_DAY) - now.get(Calendar.HOUR_OF_DAY);
+            mins = _startDate.get(Calendar.MINUTE) - now.get(Calendar.MINUTE);
+        } else {
+            years = now.get(Calendar.YEAR) - _startDate.get(Calendar.YEAR);
+            months = now.get(Calendar.MONTH) - _startDate.get(Calendar.MONTH);
+            days = now.get(Calendar.DATE) - _startDate.get(Calendar.DATE);
+            hours = now.get(Calendar.HOUR_OF_DAY) - _startDate.get(Calendar.HOUR_OF_DAY);
+            mins = now.get(Calendar.MINUTE) - _startDate.get(Calendar.MINUTE);
+        }
+
+        hours=(mins<0)? hours-1 : hours;
+        mins=(mins<0)? 60+mins : mins;
+        days=(hours<0)? days-1 : days;
+        hours=(hours<0)? 24+hours : hours;
+        months=(days<0)? months-1 : months;
+        days=(days<0)? 30+days : days;
+        years=(months<0)? years-1 : years;
+        months=(months<0)? 12+(months) : months;
+
+        years = Math.abs(years);
+        months = Math.abs(months);
+        days = Math.abs(days);
+        hours = Math.abs(hours);
+        mins = Math.abs(mins);
+        return new int[]{years,months,days,hours,mins};
+    }
+
     public boolean checkAndClearUpdated() {
         boolean updated = _updated;
         _updated = false;
@@ -154,10 +186,8 @@ public class Event implements Comparable<Event>{
     }
 
     public String get_dateText() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(_startDate);
         final SimpleDateFormat df;
-        if(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
+        if(_startDate.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
             df = new SimpleDateFormat("dd MMMM");
         } else {
             df = new SimpleDateFormat("MMMM dd, yyyy");
@@ -174,7 +204,7 @@ public class Event implements Comparable<Event>{
         } else {
             txt = " ["+_repeat+" D]";
         }
-        return df.format(cal.getTime()) + txt;
+        return df.format(_startDate.getTime()) + txt;
     }
 
     @Override

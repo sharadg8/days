@@ -71,6 +71,8 @@ public class EditorFragment extends Fragment {
     private TextView    mRepeatDays;
     private EditText    mRepeatDaysX;
 
+    private ImageButton labelButtons[];
+
     public final static int NEXT_CLOSE_EDITOR = 0;
     public final static int NEXT_ADDED_EDITOR = 1;
 
@@ -143,6 +145,9 @@ public class EditorFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
             mFavorite.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
+        } else {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+            mFavorite.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
         mRepeat = (ImageButton) rootView.findViewById(R.id.btn_repeat);
@@ -161,6 +166,9 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            mRepeat.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
+        } else {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
             mRepeat.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
@@ -187,7 +195,6 @@ public class EditorFragment extends Fragment {
                     _db.updateEvent(new Event(_eventId, title, mDate, mColorId, repeatId, mLabelId));
                 } else {
                     eventId = _db.insertEvent(new Event(0, title, mDate, mColorId, repeatId, mLabelId));
-                    //EventNotification.notify(getActivity(), _db.getEvent(eventId));
                 }
                 showNextView(NEXT_ADDED_EDITOR);
                 Calendar c = Calendar.getInstance();
@@ -197,6 +204,9 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            mSave.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
+        } else {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
             mSave.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
@@ -208,6 +218,9 @@ public class EditorFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            mCancel.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
+        } else {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
             mCancel.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
@@ -343,22 +356,28 @@ public class EditorFragment extends Fragment {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         relativeLayout.addView(linearLayout, params1);
 
+        labelButtons = new ImageButton[Event.LabelArray.length];
         for (int i = 0; i < (Event.LabelArray.length/6); i++) {
             LinearLayout linearLayout1 = new LinearLayout(getContext());
             linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.addView(linearLayout1, params1);
             for (int j = 0; j < 6; j++) {
-                linearLayout1.addView(newLabelButton(Event.LabelArray[i * 6 + j]));
+                ImageButton ib = newLabelButton(Event.LabelArray[i * 6 + j]);
+                labelButtons[i * 6 + j] = ib;
+                linearLayout1.addView(ib);
             }
         }
     }
 
-    private View newLabelButton(final int label) {
+    private ImageButton newLabelButton(final int label) {
         final ImageButton ib = new ImageButton(getContext());
         ib.setImageResource(label);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+            ib.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
+        } else {
+            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
             ib.setBackground(getActivity().obtainStyledAttributes(attrs).getDrawable(0));
         }
 
@@ -400,7 +419,7 @@ public class EditorFragment extends Fragment {
             linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.addView(linearLayout1, params1);
             for (int j = 0; j < 5; j++) {
-                linearLayout1.addView(newPaletteButton(palette[i*5+j]));
+                linearLayout1.addView(newPaletteButton(palette[i * 5 + j]));
             }
         }
     }
@@ -439,6 +458,10 @@ public class EditorFragment extends Fragment {
     }
 
     private void showLabelPicker() {
+        for (int i = 0; i < labelButtons.length; i++) {
+            labelButtons[i].setColorFilter(mColorId);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int[] location = new int[2];
             mFavorite.getLocationOnScreen(location);

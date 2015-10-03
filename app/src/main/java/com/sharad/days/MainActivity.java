@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         TimePickerFragment.OnFragmentInteractionListener {
     //private static String LOG_TAG = "MainActivity";
     private EventsFragment _eventList;
-    private EditorFragment      _editor;
+    private EditorFragment _editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity
         String currentVer = prefs.getString("appVersion", "0");
         if(!currentVer.equals(version)) {
             editor.putString("appVersion", version);
+            editor.putBoolean("notifications_enable", true);
             editor.commit();
             ReminderManager reminderMgr = new ReminderManager(this);
             DataProvider db = new DataProvider(this);
@@ -84,11 +85,7 @@ public class MainActivity extends AppCompatActivity
             new AlertDialog.Builder(this)
                     .setTitle("What's new")
                     .setMessage("Version "+version+"\n"
-                            +"1. Repeating events\n"
-                            +"2. Event notifications\n"
-                            +"3. Minor UI updates\n"
-                            +"4. Minor bug fixes\n\n"
-                            +"Do not worry if the color and icons are changed for existing events!! - Bug fixed\n\n"
+                            +"1. \n"
                             +"Thanks for using app\n"
                             +"Happy counting days!!")
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

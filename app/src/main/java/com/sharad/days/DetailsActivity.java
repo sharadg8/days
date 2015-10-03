@@ -3,7 +3,6 @@ package com.sharad.days;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -15,28 +14,21 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sharad.common.DatePickerFragment;
 import com.sharad.common.TimePickerFragment;
@@ -100,7 +92,12 @@ public class DetailsActivity extends AppCompatActivity
     }
 
     private void initViews() {
-        TextView days = (TextView) findViewById(R.id.d_days);
+        TextView num1 = (TextView) findViewById(R.id.d_num1);
+        TextView num2 = (TextView) findViewById(R.id.d_num2);
+        TextView num3 = (TextView) findViewById(R.id.d_num3);
+        TextView num1_accent = (TextView) findViewById(R.id.d_num1_accent);
+        TextView num2_accent = (TextView) findViewById(R.id.d_num2_accent);
+        TextView num3_accent = (TextView) findViewById(R.id.d_num3_accent);
         final TextView date = (TextView) findViewById(R.id.d_date);
         final TextView time = (TextView) findViewById(R.id.d_time);
         TextView title = (TextView) findViewById(R.id.d_title);
@@ -108,7 +105,41 @@ public class DetailsActivity extends AppCompatActivity
         final ImageView labelLarge = (ImageView) findViewById(R.id.d_label_big);
         ImageView agoTogo = (ImageView) findViewById(R.id.d_ago_togo);
 
-        days.setText("" + _event.get_dayCount());
+        int dates[] = _event.get_diffInDates();
+
+        if(_event.get_dayCount() > 0) {
+            if(dates[0] > 0) {
+                num1.setText("" + dates[0]);
+                num1_accent.setText("Y");
+                num1.setVisibility(View.VISIBLE);
+                num1_accent.setVisibility(View.VISIBLE);
+            } else {
+                num1.setVisibility(View.GONE);
+                num1_accent.setVisibility(View.GONE);
+            }
+            if(dates[1] > 0) {
+                num2.setText("" + dates[1]);
+                num2_accent.setText("M");
+                num2.setVisibility(View.VISIBLE);
+                num2_accent.setVisibility(View.VISIBLE);
+            } else {
+                num2.setVisibility(View.GONE);
+                num2_accent.setVisibility(View.GONE);
+            }
+            num3.setText("" + dates[2]);
+            num3_accent.setText("D");
+        } else {
+            num1.setVisibility(View.GONE);
+            num1_accent.setVisibility(View.GONE);
+
+            num2.setText("" + dates[3]);
+            num2_accent.setText("H");
+            num2.setVisibility(View.VISIBLE);
+            num2_accent.setVisibility(View.VISIBLE);
+
+            num3.setText("" + dates[4]);
+            num3_accent.setText("M");
+        }
         date.setText(_event.get_dateText());
         title.setText(_event.get_title());
         label.setImageResource(_event.get_favorite());
@@ -127,7 +158,7 @@ public class DetailsActivity extends AppCompatActivity
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         labelAnim.setDuration(500);
-        labelAnim.setRepeatCount(10);
+        labelAnim.setRepeatCount(4);
         labelAnim.setRepeatMode(Animation.REVERSE);
         label.startAnimation(labelAnim);
 
@@ -139,13 +170,9 @@ public class DetailsActivity extends AppCompatActivity
 
         labelAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
+            public void onAnimationStart(Animation animation) {}
             @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
+            public void onAnimationRepeat(Animation animation) {}
             @Override
             public void onAnimationEnd(Animation animation) {
                 label.setVisibility(View.GONE);

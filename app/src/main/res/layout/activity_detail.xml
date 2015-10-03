@@ -29,16 +29,61 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/d_days"
+                    android:id="@+id/d_num1"
                     android:textColor="@android:color/white"
-                    android:text="36"
+                    android:text="3"
+                    android:layout_gravity="center"
                     android:paddingLeft="16dp"
                     android:textSize="64sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/d_num1_accent"
+                    android:textColor="@android:color/white"
+                    android:text="Y"
+                    android:layout_marginTop="18dp"
+                    android:layout_gravity="top"
+                    android:textSize="12sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/d_num2"
+                    android:textColor="@android:color/white"
+                    android:text="6"
+                    android:layout_gravity="center"
+                    android:paddingLeft="16dp"
+                    android:textSize="64sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/d_num2_accent"
+                    android:textColor="@android:color/white"
+                    android:text="M"
+                    android:layout_marginTop="18dp"
+                    android:layout_gravity="top"
+                    android:textSize="12sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/d_num3"
+                    android:textColor="@android:color/white"
+                    android:text="26"
+                    android:layout_gravity="center"
+                    android:paddingLeft="16dp"
+                    android:textSize="64sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/d_num3_accent"
+                    android:textColor="@android:color/white"
+                    android:text="D"
+                    android:layout_marginTop="18dp"
+                    android:layout_gravity="top"
+                    android:textSize="12sp"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

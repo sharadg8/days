@@ -29,12 +29,11 @@
             android:label="@string/title_activity_detail" >
         </activity>
 
-        <receiver android:name="com.sharad.reminder.OnBootReceiver">
+        <receiver android:name="com.sharad.reminder.OnBootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.sharad.reminder.OnAlarmReceiver"
             android:enabled="true"
@@ -45,6 +44,22 @@
             android:name="com.sharad.reminder.ReminderIntentService"
             android:exported="false" >
         </service>
+
+        <receiver android:name="com.sharad.widget.EventWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/event_widget_info" />
+        </receiver>
+
+        <activity android:name="com.sharad.widget.EventWidgetConfigureActivity" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
