@@ -414,12 +414,12 @@ public class EditorFragment extends Fragment {
         relativeLayout.addView(linearLayout, params1);
 
         int[] palette = getResources().getIntArray(R.array.palette);
-        for (int i = 0; i < (palette.length/5); i++) {
+        for (int i = 0; i < (palette.length/6); i++) {
             LinearLayout linearLayout1 = new LinearLayout(getContext());
             linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.addView(linearLayout1, params1);
-            for (int j = 0; j < 5; j++) {
-                linearLayout1.addView(newPaletteButton(palette[i * 5 + j]));
+            for (int j = 0; j < 6; j++) {
+                linearLayout1.addView(newPaletteButton(palette[i * 6 + j]));
             }
         }
     }
