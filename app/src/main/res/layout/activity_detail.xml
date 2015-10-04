@@ -25,10 +25,12 @@
             android:id="@+id/swipe_view"
             android:clickable="true"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:onClick="swipeViewClick">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"

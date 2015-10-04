@@ -24,6 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.sharad.common.DatePickerFragment;
@@ -54,6 +56,13 @@ public class MainActivity extends AppCompatActivity
         initViewPager();
 
         runOnce();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.primary_dark));
+            window.setNavigationBarColor(getResources().getColor(R.color.primary_dark));
+        }
     }
 
     private void runOnce() {
