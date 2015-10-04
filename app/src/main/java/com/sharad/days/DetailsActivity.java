@@ -106,7 +106,7 @@ public class DetailsActivity extends AppCompatActivity
         final ImageView labelLarge = (ImageView) findViewById(R.id.d_label_big);
         ImageView agoTogo = (ImageView) findViewById(R.id.d_ago_togo);
 
-        setDates(_details);
+        updateDates(_details);
 
         date.setText(_event.get_dateText());
         date.setText(_event.get_dateText());
@@ -171,7 +171,7 @@ public class DetailsActivity extends AppCompatActivity
         });
     }
 
-    private void setDates(boolean showDetails) {
+    private void updateDates(boolean showDetails) {
         TextView num1 = (TextView) findViewById(R.id.d_num1);
         TextView num2 = (TextView) findViewById(R.id.d_num2);
         TextView num3 = (TextView) findViewById(R.id.d_num3);
@@ -247,13 +247,19 @@ public class DetailsActivity extends AppCompatActivity
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        updateDates(_details);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         _broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context ctx, Intent intent) {
                 if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0) {
-                    setDates(_details);
+                    updateDates(_details);
                 }
             }
         };
@@ -400,7 +406,7 @@ public class DetailsActivity extends AppCompatActivity
 
     public void swipeViewClick(View view) {
         _details = !_details;
-        setDates(_details);
+        updateDates(_details);
     }
 
     static class PagerAdapter extends FragmentPagerAdapter {
