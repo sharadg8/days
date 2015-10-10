@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity
             }
             db.close();
 
+            /*
             new AlertDialog.Builder(this)
                     .setTitle("What's new")
                     .setMessage("Version "+version+"\n"
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     })
                     .show();
+                    */
         }
     }
 

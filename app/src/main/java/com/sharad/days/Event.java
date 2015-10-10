@@ -81,6 +81,7 @@ public class Event implements Comparable<Event>{
 
         Calendar date = _startDate;
         if(repeat != REPEAT_NEVER) {
+            /*
             while((System.currentTimeMillis() - _startDate.getTimeInMillis()) < 0) {
                 Calendar c = _startDate;
                 if(repeat == REPEAT_YEARLY) {
@@ -93,6 +94,7 @@ public class Event implements Comparable<Event>{
                     _startDate.add(Calendar.DATE, -repeat);
                 }
             }
+            */
             while((System.currentTimeMillis() - _startDate.getTimeInMillis()) > 0) {
                 if(repeat == REPEAT_YEARLY) {
                     _startDate.add(Calendar.YEAR, 1);

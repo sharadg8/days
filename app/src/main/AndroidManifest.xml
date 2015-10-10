@@ -44,7 +44,7 @@
             android:name="com.sharad.reminder.ReminderIntentService"
             android:exported="false" >
         </service>
-
+<!--
         <receiver android:name="com.sharad.widget.EventWidget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -60,6 +60,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+-->
     </application>
 
 </manifest>
