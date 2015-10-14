@@ -29,4 +29,11 @@
         android:title="@string/pref_title_show_elapsed"
         android:defaultValue="true" />
 
+    <CheckBoxPreference
+        android:key="show_elapsed_last"
+        android:dependency="show_elapsed"
+        android:title="@string/pref_title_show_elapsed_last"
+        android:summary="@string/pref_info_show_elapsed_last"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

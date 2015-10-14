@@ -2,23 +2,205 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:id="@+id/screen_background">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="@string/configure" android:layout_marginBottom="8dp" />
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:background="?attr/colorPrimary" />
+    </android.support.design.widget.AppBarLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="162dp"/>
 
-    <EditText android:id="@+id/appwidget_text" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:layout_gravity="center_vertical"
-        android:inputType="text" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="vertical"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" >
 
-    <Button android:id="@+id/add_button" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:text="@string/add_widget"
-        android:layout_gravity="center_vertical" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@android:color/background_light"
+                android:gravity="center_vertical">
+                <Spinner
+                    android:id="@+id/widget_select_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown"
+                    android:drawSelectorOnTop="true">
+                </Spinner>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:orientation="vertical"
+                android:background="@android:color/background_light" >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_gravity="center_vertical">
+                    <CheckBox
+                        android:id="@+id/widget_show_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:checked="true"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="48dp"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Custom title"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/primary_text_light"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Select to set custom title"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/secondary_text_light"/>
+                    </LinearLayout>
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:gravity="center_vertical">
+                    <EditText android:id="@+id/appwidget_text"
+                        android:layout_marginLeft="48dp" android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@android:color/background_light"
+                android:layout_gravity="center_vertical">
+                <CheckBox
+                    android:id="@+id/widget_show_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="48dp"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Show icon"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/primary_text_light"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uncheck to show icon"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/secondary_text_light"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@android:color/background_light"
+                android:layout_gravity="center_vertical">
+                <CheckBox
+                    android:id="@+id/widget_show_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="48dp"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Widget background"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/primary_text_light"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@android:color/background_light"
+                android:layout_gravity="center_vertical">
+                <CheckBox
+                    android:id="@+id/widget_show_foreground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="48dp"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Widget foreground"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/primary_text_light"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <Button android:id="@+id/add_button" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/add_widget"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

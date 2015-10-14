@@ -1,16 +1,26 @@
 package com.sharad.widget;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 
+import com.sharad.days.DataProvider;
+import com.sharad.days.Event;
 import com.sharad.days.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * The configuration screen for the {@link EventWidget EventWidget} AppWidget.
@@ -53,7 +63,39 @@ public class EventWidgetConfigureActivity extends Activity {
         }
 
         mAppWidgetText.setText(loadTitlePref(EventWidgetConfigureActivity.this, mAppWidgetId));
+        mAppWidgetText.clearFocus();
 
+        WallpaperManager wm = WallpaperManager.getInstance(this);
+        LinearLayout background = (LinearLayout)findViewById(R.id.screen_background);
+        background.setBackground(wm.getDrawable());
+
+        Spinner sp = (Spinner)findViewById(R.id.widget_select_spinner);
+        SpinnerArrayAdapter adapter = new SpinnerArrayAdapter(this, R.layout.event_card, new ArrayList<Event>());
+        sp.setAdapter(adapter);
+        sp.requestFocus();
+
+        DataProvider db = new DataProvider(this);
+        db.open();
+        if(db != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String strOrder = prefs.getString("sort_order", "0");
+            boolean elapsed = prefs.getBoolean("show_elapsed", true);
+            String where;
+            if(!elapsed) {
+                where = DataProvider.KEY_EVENT_DATE + " > " + System.currentTimeMillis();
+            } else {
+                where = null;
+            }
+
+            db.getEvents(adapter.getObjects(), where);
+            Collections.sort(adapter.getObjects());
+
+            if(strOrder.equals("1")) {
+                Collections.reverse(adapter.getObjects());
+            }
+            adapter.notifyDataSetChanged();
+        }
+        db.close();
     }
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {

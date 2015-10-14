@@ -169,7 +169,8 @@ public class Event implements Comparable<Event>{
         days=(hours<0)? days-1 : days;
         hours=(hours<0)? 24+hours : hours;
         months=(days<0)? months-1 : months;
-        days=(days<0)? 30+days : days;
+        int daysThisMonth = now.getMaximum(Calendar.DATE);
+        days=(days<0)? daysThisMonth+days : days;
         years=(months<0)? years-1 : years;
         months=(months<0)? 12+(months) : months;
 

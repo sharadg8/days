@@ -11,6 +11,9 @@
 
     <string name="pref_title_show_elapsed">Show Elapsed Events</string>
 
+    <string name="pref_title_show_elapsed_last">Elapsed Events at last</string>
+    <string name="pref_info_show_elapsed_last">Select to show elapsed events at end</string>
+
     <string name="pref_title_sort_order">Sort Order</string>
     <string-array name="pref_sort_order_titles">
         <item>Ascending</item>

@@ -608,6 +608,7 @@ public class EditorFragment extends Fragment {
 
     public void dateSelected(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
+        c.setTime(mDate);
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DATE, day);
