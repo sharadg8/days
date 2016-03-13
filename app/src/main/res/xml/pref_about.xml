@@ -5,9 +5,4 @@
         android:key="version"
         android:title="@string/pref_title_version" />
 
-    <Preference
-        android:key="developer"
-        android:title="@string/pref_title_developer"
-        android:summary="@string/pref_developer_name"/>
-
 </PreferenceScreen>

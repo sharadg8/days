@@ -39,7 +39,9 @@ import com.sharad.common.TimePickerFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class DetailsActivity extends AppCompatActivity
@@ -69,6 +71,26 @@ public class DetailsActivity extends AppCompatActivity
         initToolbar();
         initViews();
         initViewPager();
+
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateTextView();
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
     }
 
     private void initToolbar() {
@@ -105,6 +127,7 @@ public class DetailsActivity extends AppCompatActivity
         final ImageView label = (ImageView) findViewById(R.id.d_label);
         final ImageView labelLarge = (ImageView) findViewById(R.id.d_label_big);
         ImageView agoTogo = (ImageView) findViewById(R.id.d_ago_togo);
+
 
         updateDates(_details);
 
@@ -178,12 +201,12 @@ public class DetailsActivity extends AppCompatActivity
         TextView num1_accent = (TextView) findViewById(R.id.d_num1_accent);
         TextView num2_accent = (TextView) findViewById(R.id.d_num2_accent);
         TextView num3_accent = (TextView) findViewById(R.id.d_num3_accent);
+        num1.setVisibility(View.GONE);
+        num1_accent.setVisibility(View.GONE);
+        num2.setVisibility(View.GONE);
+        num2_accent.setVisibility(View.GONE);
         int dates[] = _event.get_diffInDates();
         if(_event.get_dayCount() > 7) {
-            num1.setVisibility(View.GONE);
-            num1_accent.setVisibility(View.GONE);
-            num2.setVisibility(View.GONE);
-            num2_accent.setVisibility(View.GONE);
             if(showDetails) {
                 if (dates[0] > 0) {
                     num1.setText("" + dates[0]);
@@ -205,37 +228,35 @@ public class DetailsActivity extends AppCompatActivity
             }
         } else {
             if(_event.get_dayCount() > 0) {
-                num1.setText("" + dates[2]);
-                num1_accent.setText("D");
-                num1.setVisibility(View.VISIBLE);
-                num1_accent.setVisibility(View.VISIBLE);
+                num3.setText("" + dates[2]);
+                num3_accent.setText("D");
+                num3.setVisibility(View.VISIBLE);
+                num3_accent.setVisibility(View.VISIBLE);
             } else {
-                num1.setVisibility(View.GONE);
-                num1_accent.setVisibility(View.GONE);
-            }
+                num2.setText("" + dates[3]);
+                num2_accent.setText("H");
+                num2.setVisibility(View.VISIBLE);
+                num2_accent.setVisibility(View.VISIBLE);
 
-            num2.setText("" + dates[3]);
-            num2_accent.setText("H");
-            num2.setVisibility(View.VISIBLE);
-            num2_accent.setVisibility(View.VISIBLE);
-
-            num3.setText("" + dates[4]);
-            num3_accent.setText("M");
-
-            if(_event.get_dayCount() > 0) {
-                if(showDetails) {
-                    num2.setVisibility(View.VISIBLE);
-                    num2_accent.setVisibility(View.VISIBLE);
-                    num3.setVisibility(View.VISIBLE);
-                    num3_accent.setVisibility(View.VISIBLE);
-                } else {
-                    num2.setVisibility(View.GONE);
-                    num2_accent.setVisibility(View.GONE);
-                    num3.setVisibility(View.GONE);
-                    num3_accent.setVisibility(View.GONE);
-                }
+                num3.setText("" + dates[4]);
+                num3_accent.setText("M");
             }
         }
+    }
+
+    private void updateTextView() {
+        TextView details = (TextView) findViewById(R.id.d_date_details);
+        long diffmili = System.currentTimeMillis() - _event.get_startDate().getTime();
+        diffmili = Math.abs(diffmili);
+        int days = (int)TimeUnit.MILLISECONDS.toDays(diffmili);
+        diffmili -= (long)days*24*60*60*1000;
+        int hours = (int)TimeUnit.MILLISECONDS.toHours(diffmili);
+        diffmili -= (long)hours*60*60*1000;
+        int min = (int)TimeUnit.MILLISECONDS.toMinutes(diffmili);
+        diffmili -= (long)min*60*1000;
+        long sec = TimeUnit.MILLISECONDS.toSeconds(diffmili);
+        details.setText("" + days + "." + String.format("%02d", hours)
+                + ":" + String.format("%02d", min) + ":" + String.format("%02d", sec));
     }
 
     private void initViewPager() {

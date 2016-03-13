@@ -45,7 +45,8 @@
             android:exported="false" >
         </service>
 
-        <receiver android:name="com.sharad.widget.EventWidget" >
+        <receiver android:name="com.sharad.widget.EventWidget"
+            android:enabled="false" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

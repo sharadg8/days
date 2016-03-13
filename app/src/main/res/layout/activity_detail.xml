@@ -94,6 +94,14 @@
                     android:layout_gravity="center"
                     android:src="@drawable/ic_next_black_24dp"/>
             </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:id="@+id/d_date_details"
+                android:textColor="@android:color/white"
+                android:text="..."
+                android:textSize="18sp"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,14 +123,15 @@
                     android:layout_gravity="center_vertical"
                     android:textColor="@android:color/white"
                     android:text="Something Special"
-                    android:textSize="20sp"/>
+                    android:textStyle="bold"
+                    android:textSize="24sp"/>
             </LinearLayout>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/d_label_big"
-                android:paddingTop="36dp"
+                android:paddingTop="16dp"
                 android:tint="@android:color/white"
                 android:src="@drawable/ic_favorite_black_48dp"/>
 

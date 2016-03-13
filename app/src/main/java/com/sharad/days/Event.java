@@ -149,6 +149,7 @@ public class Event implements Comparable<Event>{
         int years=0,months=0,days=0,hours=0,mins=0;
 
         Calendar now = Calendar.getInstance();
+        Calendar lastMonth = Calendar.getInstance();
 
         if(now.before(_startDate)) {
             years = _startDate.get(Calendar.YEAR) - now.get(Calendar.YEAR);
@@ -162,6 +163,8 @@ public class Event implements Comparable<Event>{
             days = now.get(Calendar.DATE) - _startDate.get(Calendar.DATE);
             hours = now.get(Calendar.HOUR_OF_DAY) - _startDate.get(Calendar.HOUR_OF_DAY);
             mins = now.get(Calendar.MINUTE) - _startDate.get(Calendar.MINUTE);
+
+            lastMonth.add(Calendar.MONTH, -1);
         }
 
         hours=(mins<0)? hours-1 : hours;
@@ -169,7 +172,7 @@ public class Event implements Comparable<Event>{
         days=(hours<0)? days-1 : days;
         hours=(hours<0)? 24+hours : hours;
         months=(days<0)? months-1 : months;
-        int daysThisMonth = now.getMaximum(Calendar.DATE);
+        int daysThisMonth = lastMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         days=(days<0)? daysThisMonth+days : days;
         years=(months<0)? years-1 : years;
         months=(months<0)? 12+(months) : months;
